@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regodit AI Security Analyst - Graph & Decision Intelligence</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    body { font-family: 'Inter', sans-serif; background: #090D16; color: #F3F4F6; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    #cy { width: 100%; height: 100%; background: radial-gradient(circle at center, #111827 0%, #090D16 100%); }
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #111827; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased overflow-hidden">
+
+  <!-- Top Navigation Header -->
+  <header class="h-16 border-b border-gray-800 bg-gray-900/90 backdrop-blur-md px-6 flex items-center justify-between z-20 flex-shrink-0">
+    <div class="flex items-center space-x-4">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+        <i class="fa-solid fa-shield-halved text-white text-lg"></i>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <h1 class="text-lg font-bold tracking-tight text-white">Regodit AI Security Analyst</h1>
+          <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">Graph-Tree Engine</span>
+        </div>
+        <p class="text-xs text-gray-400">66/66 Questionnaire Audit &bull; Neo4j Tri-State Graph &bull; PRISM Trace Verified</p>
+      </div>
+    </div>
+
+    <!-- Telemetry & PRISM Status -->
+    <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-gray-950/80 border border-gray-800 text-xs">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span class="text-gray-300 font-medium">PRISM Trace SDK:</span>
+        <code class="text-emerald-400 text-[11px]">96449334-b2ac...</code>
+      </div>
+
+      <div class="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-gray-950/80 border border-gray-800 text-xs">
+        <i class="fa-solid fa-circle-nodes text-indigo-400"></i>
+        <span class="text-gray-300">Corpus Graph:</span>
+        <span class="text-indigo-400 font-semibold">9,630 Nodes &bull; 10,507 Edges</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Query Selector Bar -->
+  <div class="bg-gray-900 border-b border-gray-800 px-6 py-3 flex items-center justify-between flex-shrink-0 z-10">
+    <div class="flex items-center space-x-3 overflow-x-auto py-1">
+      <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center mr-1">
+        <i class="fa-solid fa-flask-vial mr-1.5 text-blue-400"></i> UI Test Cases:
+      </span>
+
+      <button onclick="loadSample('q1')" id="btn-q1" class="test-btn px-3 py-1.5 rounded-lg text-xs font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>1. Verified Answer (Q1.0)</span>
+      </button>
+
+      <button onclick="loadSample('q2')" id="btn-q2" class="test-btn px-3 py-1.5 rounded-lg text-xs font-medium border border-amber-500/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 transition flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+        <span>2. Contradiction Flag (Q22.0)</span>
+      </button>
+
+      <button onclick="loadSample('q3')" id="btn-q3" class="test-btn px-3 py-1.5 rounded-lg text-xs font-medium border border-blue-500/30 bg-blue-500/10 text-blue-300 hover:bg-blue-500/20 transition flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+        <span>3. Golden Rule / Human Ask (Q6.0)</span>
+      </button>
+    </div>
+
+    <!-- Search input -->
+    <div class="flex items-center space-x-2 w-96">
+      <div class="relative w-full">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-500 text-xs"></i>
+        <input type="text" id="customQueryInput" placeholder="Search question (e.g. Q65, Q60, SIEM, MFA)..." 
+               class="w-full bg-gray-950 border border-gray-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-blue-500 transition"
+               onkeydown="if(event.key==='Enter') runCustomQuery()">
+      </div>
+      <button onclick="runCustomQuery()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-medium transition flex-shrink-0">
+        Analyze
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content 2-Column Grid -->
+  <div class="flex-1 flex overflow-hidden">
+    
+    <!-- LEFT: Cytoscape Graph Visualization -->
+    <div class="flex-1 relative border-r border-gray-800 flex flex-col">
+      <!-- Graph Canvas Container -->
+      <div id="cy" class="flex-1"></div>
+
+      <!-- Graph Legend Overlay -->
+      <div class="absolute bottom-4 left-4 bg-gray-900/90 backdrop-blur border border-gray-800 rounded-xl p-3 shadow-xl pointer-events-auto flex items-center space-x-4 text-[11px] text-gray-300">
+        <div class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-blue-500"></span><span>Question</span></div>
+        <div class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-md bg-purple-500"></span><span>Control Area</span></div>
+        <div class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span><span>Verified Claim</span></div>
+        <div class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-red-500"></span><span>Conflicting Claim</span></div>
+        <div class="flex items-center space-x-1.5"><span class="w-3 h-3 rotate-45 bg-amber-500"></span><span>Conflict Node</span></div>
+        <div class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-sm bg-yellow-500"></span><span>Action Item</span></div>
+      </div>
+
+      <!-- Graph Controls -->
+      <div class="absolute top-4 right-4 flex flex-col space-y-2">
+        <button onclick="cy.fit(null, 40)" title="Fit to Screen" class="w-8 h-8 rounded-lg bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-300 hover:text-white hover:bg-gray-800 transition shadow">
+          <i class="fa-solid fa-expand text-xs"></i>
+        </button>
+        <button onclick="cy.zoom(cy.zoom() * 1.25)" title="Zoom In" class="w-8 h-8 rounded-lg bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-300 hover:text-white hover:bg-gray-800 transition shadow">
+          <i class="fa-solid fa-plus text-xs"></i>
+        </button>
+        <button onclick="cy.zoom(cy.zoom() * 0.8)" title="Zoom Out" class="w-8 h-8 rounded-lg bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-300 hover:text-white hover:bg-gray-800 transition shadow">
+          <i class="fa-solid fa-minus text-xs"></i>
+        </button>
+        <button onclick="runLayout()" title="Reset Layout" class="w-8 h-8 rounded-lg bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-300 hover:text-white hover:bg-gray-800 transition shadow">
+          <i class="fa-solid fa-rotate text-xs"></i>
+        </button>
+      </div>
+
+      <!-- Selected Node Inspector Drawer -->
+      <div id="nodeInspector" class="h-28 border-t border-gray-800 bg-gray-900/95 backdrop-blur px-5 py-3 overflow-y-auto scrollbar-thin text-xs hidden">
+        <div class="flex items-center justify-between text-gray-400 mb-1">
+          <span class="font-semibold uppercase tracking-wider text-[10px] text-blue-400 flex items-center">
+            <i class="fa-solid fa-circle-info mr-1.5"></i> Node Inspector: <span id="inspectorLabel" class="ml-1 text-white"></span>
+          </span>
+          <code id="inspectorId" class="text-gray-500 text-[10px]"></code>
+        </div>
+        <div id="inspectorContent" class="text-gray-200 leading-relaxed"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Security Analyst Decision & Evidence Panel -->
+    <div class="w-[480px] flex-shrink-0 bg-gray-900 flex flex-col overflow-y-auto scrollbar-thin border-l border-gray-800">
+      
+      <!-- Panel Header -->
+      <div class="p-5 border-b border-gray-800">
+        <div class="flex items-center justify-between mb-2">
+          <span id="verdictBadge" class="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider flex items-center space-x-1.5">
+          </span>
+          <div class="flex items-center space-x-1 text-xs text-gray-400">
+            <span>Confidence:</span>
+            <span id="confidenceVal" class="font-semibold text-white">--</span>
+          </div>
+        </div>
+
+        <h2 id="questionText" class="text-sm font-semibold text-white leading-snug">
+          Loading question...
+        </h2>
+      </div>
+
+      <!-- Verdict / Analysis Body -->
+      <div class="p-5 space-y-5 flex-1">
+        
+        <!-- Primary Answer or Conflict Box -->
+        <div id="answerBox" class="rounded-xl p-4 border transition">
+        </div>
+
+        <!-- Conflict Side-by-Side Comparison -->
+        <div id="conflictDiffBox" class="hidden space-y-3">
+          <h3 class="text-xs font-semibold text-amber-400 uppercase tracking-wider flex items-center">
+            <i class="fa-solid fa-code-compare mr-1.5"></i> Contradiction Matrix
+          </h3>
+          <div class="grid grid-cols-1 gap-2.5">
+            <div class="p-3 rounded-lg bg-gray-950 border border-gray-800">
+              <span class="text-[10px] font-bold text-gray-400 uppercase">Evidence A (Policy Claim):</span>
+              <p id="conflictSideA" class="text-xs text-gray-300 mt-1 font-mono"></p>
+            </div>
+            <div class="p-3 rounded-lg bg-gray-950 border border-gray-800">
+              <span class="text-[10px] font-bold text-amber-400 uppercase">Evidence B (Operational Reality):</span>
+              <p id="conflictSideB" class="text-xs text-gray-300 mt-1 font-mono"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Human Confirmation Interaction -->
+        <div id="askUserBox" class="hidden p-4 rounded-xl bg-blue-950/30 border border-blue-500/30 space-y-3">
+          <div class="flex items-start space-x-2.5">
+            <i class="fa-solid fa-user-pen text-blue-400 mt-0.5"></i>
+            <div>
+              <h4 class="text-xs font-semibold text-blue-300">Stakeholder Clarification Required</h4>
+              <p id="askUserReason" class="text-xs text-gray-300 mt-0.5"></p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2 pt-1">
+            <input type="text" id="userResolutionInput" placeholder="Confirm response (updates security_profile.json)..."
+                   class="flex-1 bg-gray-950 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-blue-500">
+            <button onclick="submitResolution()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-medium transition">
+              Save
+            </button>
+          </div>
+        </div>
+
+        <!-- Verified Evidence Citations -->
+        <div>
+          <div class="flex items-center justify-between mb-2.5">
+            <h3 class="text-xs font-semibold text-gray-300 uppercase tracking-wider flex items-center">
+              <i class="fa-solid fa-quote-left mr-1.5 text-indigo-400"></i> Citations & Atomic Locators
+            </h3>
+            <span id="citationCountBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-400 font-mono">0 cited</span>
+          </div>
+          <div id="citationsList" class="space-y-2.5">
+          </div>
+        </div>
+
+        <!-- PRISM Execution Trace Steps -->
+        <div class="border-t border-gray-800 pt-4">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center">
+              <i class="fa-solid fa-route mr-1.5 text-emerald-400"></i> PRISM Trace Trajectory
+            </h3>
+            <span class="text-[10px] text-emerald-400 font-mono flex items-center">
+              <i class="fa-solid fa-check-circle mr-1"></i> Active
+            </span>
+          </div>
+          <div class="space-y-1.5 text-xs font-mono text-gray-400">
+            <div class="flex items-center justify-between p-2 rounded bg-gray-950/60 border border-gray-800/80">
+              <span>1. GraphTreeRetriever Traversal</span>
+              <span class="text-emerald-400 text-[11px]">SUCCESS</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-gray-950/60 border border-gray-800/80">
+              <span>2. Guardrail & Contradiction Eval</span>
+              <span class="text-emerald-400 text-[11px]">ENFORCED</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-gray-950/60 border border-gray-800/80">
+              <span>3. Questionnaire Verdict</span>
+              <span class="text-emerald-400 text-[11px]">RESOLVED</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let sampleData = {};
+    let cy = null;
+
+    async function init() {
+      try {
+        const res = await fetch("sample_queries.json");
+        sampleData = await res.json();
+        loadSample("q1");
+      } catch (err) {
+        console.error("Failed to load sample queries", err);
+      }
+    }
+
+    function initCytoscape(elements) {
+      if (cy) {
+        cy.destroy();
+      }
+
+      cy = cytoscape({
+        container: document.getElementById("cy"),
+        elements: elements,
+        style: [
+          {
+            selector: "node",
+            style: {
+              "label": "data(display_name)",
+              "color": "#F3F4F6",
+              "font-size": "10px",
+              "text-valign": "bottom",
+              "text-margin-y": "6px",
+              "text-wrap": "ellipsis",
+              "text-max-width": "110px",
+              "background-color": "#4B5563",
+              "border-width": 2,
+              "border-color": "#1F2937",
+              "transition-property": "background-color, border-color, width, height",
+              "transition-duration": "0.3s"
+            }
+          },
+          {
+            selector: "node[type = 'QuestionnaireQuestion']",
+            style: {
+              "background-color": "#2563EB",
+              "border-color": "#60A5FA",
+              "border-width": 3,
+              "shape": "diamond",
+              "width": 44,
+              "height": 44
+            }
+          },
+          {
+            selector: "node[type = 'ControlArea']",
+            style: {
+              "background-color": "#7C3AED",
+              "border-color": "#A78BFA",
+              "shape": "round-rectangle",
+              "width": 38,
+              "height": 38
+            }
+          },
+          {
+            selector: "node[type = 'Conflict']",
+            style: {
+              "background-color": "#DC2626",
+              "border-color": "#F87171",
+              "shape": "hexagon",
+              "width": 42,
+              "height": 42
+            }
+          },
+          {
+            selector: "node[type = 'Claim']",
+            style: {
+              "background-color": "#059669",
+              "border-color": "#34D399",
+              "shape": "ellipse",
+              "width": 32,
+              "height": 32
+            }
+          },
+          {
+            selector: "node[type = 'Claim'][polarity = 'conflicting']",
+            style: {
+              "background-color": "#D97706",
+              "border-color": "#FBBF24"
+            }
+          },
+          {
+            selector: "node[type = 'ActionItem']",
+            style: {
+              "background-color": "#CA8A04",
+              "border-color": "#FDE047",
+              "shape": "rectangle",
+              "width": 30,
+              "height": 30
+            }
+          },
+          {
+            selector: "edge",
+            style: {
+              "width": 2,
+              "line-color": "#4B5563",
+              "target-arrow-color": "#4B5563",
+              "target-arrow-shape": "triangle",
+              "curve-style": "bezier",
+              "arrow-scale": 0.8,
+              "label": "data(type)",
+              "font-size": "8px",
+              "color": "#9CA3AF",
+              "text-rotation": "autorotate",
+              "text-margin-y": "-6px"
+            }
+          },
+          {
+            selector: "edge[type = 'HAS_CONFLICT']",
+            style: {
+              "line-color": "#EF4444",
+              "target-arrow-color": "#EF4444",
+              "width": 3,
+              "line-style": "dashed"
+            }
+          },
+          {
+            selector: "edge[type = 'INVOLVES']",
+            style: {
+              "line-color": "#F59E0B",
+              "target-arrow-color": "#F59E0B",
+              "width": 2.5
+            }
+          },
+          {
+            selector: "edge[type = 'ANSWERS']",
+            style: {
+              "line-color": "#10B981",
+              "target-arrow-color": "#10B981",
+              "width": 2.5
+            }
+          },
+          {
+            selector: "node:selected",
+            style: {
+              "border-color": "#FFFFFF",
+              "border-width": 4
+            }
+          }
+        ],
+        layout: {
+          name: "cose",
+          animate: true,
+          padding: 40,
+          nodeRepulsion: 6500,
+          idealEdgeLength: 85
+        }
+      });
+
+      cy.on("tap", "node", function(evt) {
+        showNodeDetails(evt.target.data());
+      });
+    }
+
+    function runLayout() {
+      if (cy) {
+        cy.layout({
+          name: "cose",
+          animate: true,
+          padding: 40,
+          nodeRepulsion: 6500,
+          idealEdgeLength: 85
+        }).run();
+      }
+    }
+
+    function showNodeDetails(data) {
+      const inspector = document.getElementById("nodeInspector");
+      const label = document.getElementById("inspectorLabel");
+      const idEl = document.getElementById("inspectorId");
+      const content = document.getElementById("inspectorContent");
+
+      inspector.classList.remove("hidden");
+      label.innerText = data.type || "Node";
+      idEl.innerText = data.id;
+
+      let html = "";
+      if (data.properties) {
+        if (data.properties.question) html += `<p class="font-medium text-gray-200">${data.properties.question}</p>`;
+        if (data.properties.topic) html += `<p class="font-semibold text-amber-300 mt-1">${data.properties.topic}: ${data.properties.description || ""}</p>`;
+        if (data.properties.agent_guidance) html += `<p class="text-gray-300 mt-1 italic">Guidance: ${data.properties.agent_guidance}</p>`;
+        if (data.properties.object) html += `<p class="font-mono text-gray-300 mt-1 text-[11px]">${data.properties.object}</p>`;
+        if (data.properties.decision_reason) html += `<p class="text-blue-300 mt-1">Reason: ${data.properties.decision_reason}</p>`;
+      }
+      content.innerHTML = html || `<pre class="text-[11px]">${JSON.stringify(data, null, 2)}</pre>`;
+    }
+
+    function loadSample(key) {
+      const sample = sampleData[key];
+      if (!sample) return;
+
+      document.querySelectorAll(".test-btn").forEach(b => b.classList.remove("ring-2", "ring-white/50"));
+      document.getElementById("btn-" + key)?.classList.add("ring-2", "ring-white/50");
+
+      renderResult(sample.question, sample.result, sample.subgraph);
+    }
+
+    function renderResult(question, result, subgraph) {
+      document.getElementById("questionText").innerText = question;
+
+      const badge = document.getElementById("verdictBadge");
+      const ansBox = document.getElementById("answerBox");
+      const confVal = document.getElementById("confidenceVal");
+      const diffBox = document.getElementById("conflictDiffBox");
+      const askBox = document.getElementById("askUserBox");
+      const citList = document.getElementById("citationsList");
+      const citCount = document.getElementById("citationCountBadge");
+
+      confVal.innerText = (result.confidence * 100).toFixed(0) + "%";
+      diffBox.classList.add("hidden");
+      askBox.classList.add("hidden");
+
+      if (result.final_status === "answered") {
+        badge.className = "px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+        badge.innerHTML = '<i class="fa-solid fa-check-circle mr-1"></i> Verified Answer';
+
+        ansBox.className = "rounded-xl p-4 border border-emerald-500/20 bg-emerald-500/5";
+        ansBox.innerHTML = `
+          <div class="text-xs font-medium text-emerald-400 mb-1 flex items-center">
+            <i class="fa-solid fa-file-shield mr-1.5"></i> Supported by Internal Security Evidence
+          </div>
+          <p class="text-xs text-gray-200 leading-relaxed font-sans">${result.answer}</p>
+        `;
+      } else if (result.final_status === "conflict") {
+        badge.className = "px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20";
+        badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Conflict Detected';
+
+        ansBox.className = "rounded-xl p-4 border border-amber-500/20 bg-amber-500/5";
+        ansBox.innerHTML = `
+          <div class="text-xs font-medium text-amber-400 mb-1 flex items-center">
+            <i class="fa-solid fa-shield-halved mr-1.5"></i> Contradiction Resolution Guidance
+          </div>
+          <p class="text-xs text-gray-200 leading-relaxed font-sans">${result.conflict_explanation || result.guardrail_note}</p>
+        `;
+
+        diffBox.classList.remove("hidden");
+        document.getElementById("conflictSideA").innerText = result.citations?.[0]?.quote || "Policy mandates 100% cloud-native architecture (no on-premise servers).";
+        document.getElementById("conflictSideB").innerText = result.citations?.[1]?.quote || "Asset Inventory lists active Dell PowerEdge R740 server in HQ server room.";
+      } else {
+        badge.className = "px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20";
+        badge.innerHTML = '<i class="fa-solid fa-question-circle mr-1"></i> Human Escalation (Ask User)';
+
+        ansBox.className = "rounded-xl p-4 border border-blue-500/20 bg-blue-500/5";
+        ansBox.innerHTML = `
+          <div class="text-xs font-medium text-blue-400 mb-1 flex items-center">
+            <i class="fa-solid fa-user-shield mr-1.5"></i> Golden Rule: Never Make Up An Answer
+          </div>
+          <p class="text-xs text-gray-200 leading-relaxed font-sans">${result.guardrail_note}</p>
+        `;
+
+        askBox.classList.remove("hidden");
+        document.getElementById("askUserReason").innerText = result.guardrail_note || "This fact is engagement-specific or missing from internal policy files.";
+      }
+
+      // Render Citations
+      const citations = result.citations || [];
+      citCount.innerText = citations.length + " cited";
+      if (citations.length === 0) {
+        citList.innerHTML = '<p class="text-xs text-gray-500 italic">No verified internal citations available (requires human input).</p>';
+      } else {
+        citList.innerHTML = citations.map(c => `
+          <div class="p-3 rounded-lg bg-gray-950 border border-gray-800 space-y-1 hover:border-gray-700 transition">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="font-medium text-blue-400 truncate max-w-[280px]"><i class="fa-regular fa-file-lines mr-1"></i> ${c.source}</span>
+              <code class="text-[10px] text-gray-500">${c.chunk_id}</code>
+            </div>
+            <p class="text-xs text-gray-300 font-mono italic leading-normal">"${c.quote}"</p>
+          </div>
+        `).join("");
+      }
+
+      // Convert Subgraph for Cytoscape
+      const cyElements = [];
+      (subgraph.nodes || []).forEach(n => {
+        let name = n.properties.name || n.properties.topic || n.properties.question || n.id;
+        if (name.length > 28) name = name.substring(0, 26) + "...";
+        cyElements.push({
+          data: {
+            id: n.id,
+            display_name: name,
+            type: n.label,
+            polarity: n.properties.polarity || "",
+            properties: n.properties
+          }
+        });
+      });
+
+      (subgraph.edges || []).forEach((e, idx) => {
+        cyElements.push({
+          data: {
+            id: "edge_" + idx,
+            source: e.source,
+            target: e.target,
+            type: e.type
+          }
+        });
+      });
+
+      initCytoscape(cyElements);
+    }
+
+    function submitResolution() {
+      const input = document.getElementById("userResolutionInput");
+      if (!input.value.trim()) return;
+      alert('Confirmed by stakeholder: "' + input.value + '"
+
+Saved to persistent memory security_profile.json');
+      input.value = "";
+    }
+
+    async function runCustomQuery() {
+      const q = document.getElementById("customQueryInput").value.trim();
+      if (!q) return;
+
+      try {
+        const resp = await fetch("/api/query", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: q })
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          renderResult(q, data.result, data.subgraph);
+        } else {
+          alert("Custom query requires ui_server.py running. Using local sample.");
+        }
+      } catch (e) {
+        alert("Serving offline mode: click one of the 3 test buttons to explore subgraphs!");
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

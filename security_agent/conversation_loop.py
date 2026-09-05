@@ -21,9 +21,14 @@ LIVE MODE: evaluate_user_reply() now calls the real Anthropic API (same
 mock on any failure so a flaky connection never breaks the demo.
 """
 import json
-from agent_loop import process_question, load_chunks, call_llm, extract_json, MODEL_NAME
-from retrieve_v2 import Retriever
-import security_profile as profile_store
+try:
+    from agent_loop import process_question, load_chunks, call_llm, extract_json, MODEL_NAME
+    from retrieve_graph import GraphTreeRetriever as Retriever
+    import security_profile as profile_store
+except ImportError:
+    from security_agent.agent_loop import process_question, load_chunks, call_llm, extract_json, MODEL_NAME
+    from security_agent.retrieve_graph import GraphTreeRetriever as Retriever
+    import security_agent.security_profile as profile_store
 
 MAX_FOLLOWUPS = 3
 
@@ -90,8 +95,10 @@ def evaluate_user_reply(question, reply, history):
         question=question, history_block=_format_history(history), reply=reply
     )
     try:
-        raw = call_llm(prompt)
-        parsed = extract_json(raw)
+        # call_llm() already returns a parsed dict (it does its own JSON
+        # extraction internally) - don't run extract_json() on it again,
+        # that would call .strip() on a dict and raise AttributeError.
+        parsed = call_llm(prompt)
         return {
             "complete": bool(parsed.get("complete", True)),
             "follow_up_question": parsed.get("follow_up_question"),
