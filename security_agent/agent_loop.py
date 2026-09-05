@@ -134,7 +134,10 @@ def call_llm(prompt, max_retries=2):
             max_tokens=600,
             messages=messages,
         )
-        raw_text = resp.content[0].text
+        # Sonnet 5 runs adaptive thinking by default, so content[0] can be
+        # a ThinkingBlock (no .text) with the real answer in a later block -
+        # find the actual text block instead of assuming index 0.
+        raw_text = next((b.text for b in resp.content if b.type == "text"), "")
         try:
             return _extract_json(raw_text)
         except (json.JSONDecodeError, AttributeError):

@@ -95,8 +95,10 @@ def evaluate_user_reply(question, reply, history):
         question=question, history_block=_format_history(history), reply=reply
     )
     try:
-        raw = call_llm(prompt)
-        parsed = extract_json(raw)
+        # call_llm() already returns a parsed dict (it does its own JSON
+        # extraction internally) - don't run extract_json() on it again,
+        # that would call .strip() on a dict and raise AttributeError.
+        parsed = call_llm(prompt)
         return {
             "complete": bool(parsed.get("complete", True)),
             "follow_up_question": parsed.get("follow_up_question"),
