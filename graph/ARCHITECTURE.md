@@ -98,6 +98,17 @@ Generated artifacts are written to `graph/out/`:
 - `relationships.csv`
 - `neo4j_import.cypher`
 
+Optional external enrichment:
+
+```bash
+export TAVILY_API_KEY="tvly-..."
+python3 tools/tavily_external_enrichment.py
+python3 graph/build_security_graph.py --external-facts graph/out/external_facts.tavily.json
+python3 tools/validate_security_graph.py
+```
+
+The Tavily collector currently targets high-signal cases: NIST MFA guidance, OWASP web application risks, TLS guidance, AWS/GitHub/Google public trust material, and remediation context for missing authentication and prompt injection findings.
+
 ## Expected Counts
 
 Current expected output:
