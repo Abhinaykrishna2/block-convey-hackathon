@@ -13,42 +13,31 @@ GUARDRAIL PRINCIPLE (the "never fabricate" rule):
   final answer. This is the layer that makes the system defensible
   to judges - the LLM proposes, the guardrail layer disposes.
 
-LIVE MODE: call_llm() now calls the real Anthropic API (needs
-ANTHROPIC_API_KEY in a .env file next to this script). If the key is
-missing, or the API call fails for any reason, we fall back to
-simulate_llm_reasoning() so a demo never hard-crashes on a bad network
-or a rate limit - it just becomes visibly less "smart", not broken.
+TODO at the hackathon: wire call_llm() to a real Claude/OpenAI call.
+For now, simulate_llm_reasoning() gives a transparent, rule-based
+stand-in so the pipeline can be tested end-to-end offline, using
+the ACTUAL retrieved chunks from the real dataset.
 """
 import json
 import os
 import re
-
-from dotenv import load_dotenv
+import anthropic
 from retrieve_v2 import load_chunks, Retriever
-
-load_dotenv()  # reads .env in this folder, sets ANTHROPIC_API_KEY etc.
 
 _client = None
 
-
-def _get_client():
-    """Lazily create the Anthropic client so importing this module never
-    fails just because a key isn't set yet (e.g. running eval_set.py
-    standalone before the .env exists)."""
+def get_client():
     global _client
     if _client is None:
-        import anthropic
         api_key = os.environ.get("ANTHROPIC_API_KEY")
         if not api_key:
             raise RuntimeError(
-                "ANTHROPIC_API_KEY not set. Create a .env file next to this "
-                "script with ANTHROPIC_API_KEY=sk-ant-... "
+                "ANTHROPIC_API_KEY not set. Run:\n"
+                "  export ANTHROPIC_API_KEY=sk-ant-...\n"
+                "before starting the app."
             )
         _client = anthropic.Anthropic(api_key=api_key)
     return _client
-
-
-MODEL_NAME = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-5")
 
 # ---- 1. Prompt template (use this verbatim at the hackathon) ----
 
@@ -66,7 +55,7 @@ Decide one of the following, and respond ONLY as JSON:
 2. "conflict" - two or more evidence pieces disagree with each other
 3. "insufficient" - the evidence does not address this question at all
 
-Respond in this exact JSON shape, and nothing else - no markdown fences, no commentary:
+Respond in this exact JSON shape:
 {{
   "status": "answered" | "conflict" | "insufficient",
   "answer": "<your answer in plain language, or null>",
@@ -82,43 +71,66 @@ def build_evidence_block(chunks):
         lines.append(f"- [{c['chunk_id']}] ({c['source']}): {c['text']}")
     return "\n".join(lines)
 
+# ---- 2. LLM call (stub for today, real API at the hackathon) ----
 
-def extract_json(raw_text):
-    """
-    Models sometimes wrap JSON in ```json ... ``` fences, or add a
-    stray sentence before/after it despite instructions. Strip fences
-    first, then fall back to grabbing the outermost {...} block.
-    """
-    text = raw_text.strip()
-    fence_match = re.search(r"```(?:json)?\s*(\{.*\})\s*```", text, re.DOTALL)
+def _extract_json(text):
+    """LLMs sometimes wrap JSON in ```json fences or add stray text
+    around it - strip that before parsing rather than failing outright."""
+    text = text.strip()
+    fence_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
     if fence_match:
         text = fence_match.group(1)
     else:
+        # fall back to grabbing the first {...} block found
         brace_match = re.search(r"\{.*\}", text, re.DOTALL)
         if brace_match:
             text = brace_match.group(0)
     return json.loads(text)
 
-# ---- 2. LLM call (LIVE - real Anthropic API) ----
+def call_llm(prompt, max_retries=2):
+    """
+    Real Claude API call. Retries once on a JSON-parse failure by
+    asking the model to reformat - LLMs occasionally add a stray
+    sentence before/after the JSON, and that's cheaper to fix with
+    a follow-up than to fail the whole question.
+    """
+    client = get_client()
+    messages = [{"role": "user", "content": prompt}]
 
-def call_llm(prompt):
-    client = _get_client()
-    resp = client.messages.create(
-        model=MODEL_NAME,
-        max_tokens=600,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return resp.content[0].text
-
+    for attempt in range(max_retries + 1):
+        resp = client.messages.create(
+            model="claude-sonnet-5",
+            max_tokens=600,
+            messages=messages,
+        )
+        raw_text = resp.content[0].text
+        try:
+            return _extract_json(raw_text)
+        except (json.JSONDecodeError, AttributeError):
+            if attempt == max_retries:
+                # last resort: surface as insufficient rather than crash
+                return {
+                    "status": "insufficient",
+                    "answer": None,
+                    "confidence": 0.0,
+                    "citations": [],
+                    "conflict_explanation": None,
+                    "_parse_error": raw_text[:300],
+                }
+            messages.append({"role": "assistant", "content": raw_text})
+            messages.append({"role": "user", "content": "That wasn't valid JSON. Respond with ONLY the JSON object, no other text."})
 
 def simulate_llm_reasoning(question, chunks):
     """
-    Transparent MOCK reasoning - kept as the offline/no-key/API-failure
-    fallback so a flaky connection or a missing key at demo time doesn't
-    take the whole pipeline down. Not meant to be smart.
+    Transparent MOCK reasoning so we can test the pipeline shape
+    offline, today, against REAL retrieved chunks. Not meant to be
+    smart - just deterministic enough to validate the guardrail
+    logic downstream. Replace with call_llm() at the event.
     """
     texts = " ".join(c["text"].lower() for c in chunks)
 
+    # crude conflict detector: looks for both "required/enforced" AND
+    # "recommend/implement/enhance" language about the same topic
     requires_lang = any(w in texts for w in ["required across", "is enforced", "is required"])
     recommends_lang = any(w in texts for w in ["recommend", "enhance security by implementing", "encourage or require"])
 
@@ -147,6 +159,7 @@ def simulate_llm_reasoning(question, chunks):
             "conflict_explanation": None,
         }
 
+    # default: treat top chunk as a confident answer
     top = chunks[0]
     return {
         "status": "answered",
@@ -155,28 +168,6 @@ def simulate_llm_reasoning(question, chunks):
         "citations": [{"source": top["source"], "chunk_id": top["chunk_id"], "quote": top["text"][:150]}],
         "conflict_explanation": None,
     }
-
-
-def get_llm_decision(question, chunks, evidence_block, prompt):
-    """
-    Try the real API first; fall back to the deterministic mock on any
-    failure (missing key, network error, bad JSON back) so the demo
-    keeps running. `used_live_llm` is stamped on the result so you can
-    tell judges honestly whether a given answer came from the real
-    model or the offline fallback.
-    """
-    try:
-        raw = call_llm(prompt)
-        parsed = extract_json(raw)
-        parsed.setdefault("citations", [])
-        parsed.setdefault("conflict_explanation", None)
-        parsed["used_live_llm"] = True
-        return parsed
-    except Exception as e:
-        fallback = simulate_llm_reasoning(question, chunks)
-        fallback["used_live_llm"] = False
-        fallback["llm_error"] = str(e)
-        return fallback
 
 # ---- 3. Guardrail enforcement (THE key deliverable) ----
 
@@ -191,15 +182,19 @@ def enforce_guardrails(llm_output, question):
     citations = llm_output.get("citations", [])
     confidence = llm_output.get("confidence", 0)
 
+    # Guardrail 1: no answer without at least one citation
     if status == "answered" and not citations:
         return _override(llm_output, "ask_user", "No evidence citation provided - refusing to auto-answer.")
 
+    # Guardrail 2: low confidence forces escalation, even if LLM says "answered"
     if status == "answered" and confidence < CONFIDENCE_FLOOR:
         return _override(llm_output, "ask_user", f"Confidence {confidence} below floor {CONFIDENCE_FLOOR} - escalating to human.")
 
+    # Guardrail 3: conflicts NEVER auto-resolve, regardless of confidence
     if status == "conflict":
         return _override(llm_output, "conflict", "Conflicting evidence detected - human resolution required.", keep_explanation=True)
 
+    # Guardrail 4: insufficient evidence -> ask user directly
     if status == "insufficient":
         return _override(llm_output, "ask_user", "No sufficient evidence found in company documents.")
 
@@ -219,7 +214,7 @@ def process_question(question, retriever, top_k=12):
     evidence_block = build_evidence_block(chunks) if chunks else "(no relevant evidence found)"
     prompt = DECISION_PROMPT_TEMPLATE.format(question=question, evidence_block=evidence_block)
 
-    raw_output = get_llm_decision(question, chunks, evidence_block, prompt)
+    raw_output = call_llm(prompt)
 
     result = enforce_guardrails(raw_output, question)
     result["question"] = question
@@ -240,7 +235,7 @@ if __name__ == "__main__":
         result = process_question(q, retriever)
         print("=" * 80)
         print("Q:", q)
-        print("FINAL STATUS:", result["final_status"], "| LIVE LLM:", result.get("used_live_llm"))
+        print("FINAL STATUS:", result["final_status"])
         print("GUARDRAIL NOTE:", result["guardrail_note"])
         if result.get("answer"):
             print("ANSWER:", result["answer"])
