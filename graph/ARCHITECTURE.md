@@ -101,7 +101,7 @@ Generated artifacts are written to `graph/out/`:
 Optional external enrichment:
 
 ```bash
-export TAVILY_API_KEY="tvly-..."
+printf 'TAVILY_API_KEY=tvly-...\n' > .env.local
 python3 tools/tavily_external_enrichment.py
 python3 graph/build_security_graph.py --external-facts graph/out/external_facts.tavily.json
 python3 tools/validate_security_graph.py
