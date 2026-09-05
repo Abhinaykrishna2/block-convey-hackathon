@@ -11,4 +11,5 @@ evidence/kg_index.jsonl
 evidence/knowledge_graph.json
 graph/out/external_facts.tavily.json
 extracted_media/
-
+node_modules/
+.next/
