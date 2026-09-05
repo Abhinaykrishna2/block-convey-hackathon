@@ -100,6 +100,7 @@ def main() -> None:
         print(json.dumps({"cases": TAVILY_CASES}, indent=2, sort_keys=True))
         return
 
+    load_env_file(args.env_file)
     api_key = args.api_key or os.environ.get("TAVILY_API_KEY")
     if not api_key and not args.dry_run:
         raise SystemExit("Missing Tavily API key. Set TAVILY_API_KEY or pass --api-key.")
@@ -130,6 +131,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Collect Tavily external facts for graph enrichment")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--api-key", default=None, help="Tavily API key. Prefer TAVILY_API_KEY env var.")
+    parser.add_argument("--env-file", type=Path, default=ROOT / ".env.local")
     parser.add_argument("--cases", nargs="*", default=None, help="Optional case IDs to run.")
     parser.add_argument("--max-results", type=int, default=2)
     parser.add_argument("--search-depth", choices=["basic", "advanced", "fast", "ultra-fast"], default="basic")
@@ -137,6 +139,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dry-run", action="store_true", help="Write placeholder facts without calling Tavily.")
     parser.add_argument("--list-cases", action="store_true", help="Print available Tavily cases and exit.")
     return parser.parse_args()
+
+
+def load_env_file(path: Path) -> None:
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
 
 
 def select_cases(case_ids: list[str] | None) -> list[dict[str, Any]]:

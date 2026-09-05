@@ -3,3 +3,5 @@ Hackathon/
 evidence/blocks.jsonl
 __pycache__/
 *.pyc
+.env
+.env.local
