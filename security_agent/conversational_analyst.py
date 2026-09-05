@@ -134,6 +134,44 @@ def synthesize_conversational_response(
     recommendation: Optional[str] = None
     rec_action: Optional[str] = None
 
+    # Check if this is a follow-up inquiry asking to clarify an entity (e.g. "what is it", "what is that")
+    q_norm = question.strip().lower().strip("?!. ")
+    is_what_is_it = any(phrase in q_norm for phrase in [
+        "what is it", "what is that", "what does that mean", "what do you mean",
+        "tell me more", "explain it", "what about it", "why", "how so"
+    ]) or q_norm in ["what is it", "what is that", "why", "how", "explain"]
+
+    FOLLOWUP_EXPLANATIONS = {
+        "Hosting Architecture": (
+            "In this context, **'it' refers to the on-premises Dell PowerEdge R740 backup server** located in the HQ server room (Asset SN-100239).\n\n"
+            "The operational discrepancy is that our formal Information Security Policy declares Regodit operates 100% in the AWS cloud with zero on-premises servers, but our physical asset records still list this active backup server and a Cisco Meraki firewall in the office."
+        ),
+        "Centralized Logging & SIEM": (
+            "In this context, **'it' refers to our Centralized SIEM & Logging architecture**.\n\n"
+            "Network architecture diagrams depict a centralized SIEM receiving production logs, whereas our formal InfoSec Policy states no dedicated SIEM is currently operated, relying instead on native AWS CloudTrail and CloudWatch."
+        ),
+        "Access Revocation & Offboarding": (
+            "In this context, **'it' refers to contractor M. Delgado's delayed access revocation**.\n\n"
+            "While company policy mandates a strict 24-hour access termination SLA, operational audits discovered that contractor M. Delgado retained active AWS Production Admin console permissions for 5 days after their laptop was wiped."
+        ),
+        "Authentication / MFA": (
+            "In this context, **'it' refers to our MFA coverage discrepancy**.\n\n"
+            "While internal policy states MFA is required across all core systems, an independent penetration test report recommended implementing MFA on customer-facing web applications, indicating it was not enforced on external user logins."
+        ),
+        "Subcontractor & Vendor Governance": (
+            "In this context, **'it' refers to the use of third-party contractors and external agencies**.\n\n"
+            "While corporate statements claim all development is performed by full-time vetted employees, vendor records indicate external contractors were engaged on customer project deliverables."
+        ),
+        "Vulnerability Management & VAPT": (
+            "In this context, **'it' refers to the 20 open vulnerability findings from VAPT Report 01**.\n\n"
+            "The penetration test identified 20 open vulnerabilities, with High CVSS findings remaining active under their allowable 30-day remediation SLA window."
+        ),
+        "Secure Software Development (SDLC)": (
+            "In this context, **'it' refers to our formal SDLC documentation**.\n\n"
+            "Core SDLC controls (GitHub pull request peer reviews, branch protection, deployment approvals) are actively enforced under InfoSec Policy Sec 13, but the standalone SDLC policy document was found to be an unfilled template."
+        ),
+    }
+
     # 1. CONFLICT CASE
     if raw_status == "conflict":
         clarifying_q = playbook.get(
@@ -149,16 +187,23 @@ def synthesize_conversational_response(
             "Confirmed: Current operational practice adheres to the formal Information Security Policy standard."
         )
 
-        reply_parts = [
-            "I reviewed our internal security documentation and identified a documented operational discrepancy:\n\n",
-            f"**Discrepancy Details**:\n{conflict_explanation or 'Policies and operational telemetry indicate conflicting requirements for this control.'}\n\n",
-        ]
-        if raw_answer:
-            reply_parts.append(f"**Documented Stances**:\n{raw_answer}\n\n")
-        
-        reply_parts.append(
-            "Per our Golden Rule (never assume or guess when documents disagree), I need stakeholder clarification to resolve this."
-        )
+        if is_what_is_it and control_intent in FOLLOWUP_EXPLANATIONS:
+            detail_text = FOLLOWUP_EXPLANATIONS[control_intent]
+            reply_parts = [
+                f"{detail_text}\n\n",
+                "Per our Golden Rule (never assume or guess when documents disagree), stakeholder clarification is required to formalize our official stance."
+            ]
+        else:
+            reply_parts = [
+                "I reviewed our internal security documentation and identified a documented operational discrepancy:\n\n",
+                f"**Discrepancy Details**:\n{conflict_explanation or 'Policies and operational telemetry indicate conflicting requirements for this control.'}\n\n",
+            ]
+            if raw_answer:
+                reply_parts.append(f"**Documented Stances**:\n{raw_answer}\n\n")
+            
+            reply_parts.append(
+                "Per our Golden Rule (never assume or guess when documents disagree), I need stakeholder clarification to resolve this."
+            )
 
         return {
             "conversational_reply": "".join(reply_parts),

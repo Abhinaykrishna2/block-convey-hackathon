@@ -5,7 +5,7 @@ import { css } from "../theme";
 
 type Status =
   | "answered" | "conflict" | "ask_user" | "insufficient"
-  | "confirmed" | "remembered";
+  | "confirmed" | "remembered" | "general" | "conversational";
 type Citation = { id: string; source: string; quote?: string; sourceType?: string };
 type Answering = { questionId: string; question: string; followUp: string };
 type Message = {
@@ -60,6 +60,8 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   insufficient: { label: "Needs input", color: "#64748b" },
   confirmed: { label: "Confirmed by you", color: "#9a5b32" },
   remembered: { label: "From memory", color: "#7c6a9a" },
+  general: { label: "General knowledge", color: "#8a8074" },
+  conversational: { label: "Assistant dialogue", color: "#8a8074" },
 };
 
 const RECORD_META: Record<string, { label: string; color: string }> = {
@@ -324,12 +326,12 @@ export default function Analyst() {
                   style={{ ["--rail" as any]: STATUS_META[m.status ?? "ask_user"].color }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", marginBottom: "8px" }}>
-                    {m.status && (
+                    {m.status && STATUS_META[m.status] && (
                       <span className="badge" style={{ color: STATUS_META[m.status].color, borderColor: STATUS_META[m.status].color + "55" }}>
                         {STATUS_META[m.status].label}
                       </span>
                     )}
-                    {m.confidence !== undefined && (
+                    {m.confidence !== undefined && m.confidence !== null && m.status !== "general" && m.status !== "conversational" && (
                       <span style={{ fontSize: "12.5px", color: "var(--tx2)", fontFamily: "ui-monospace, monospace" }}>
                         Confidence: <b>{Math.round(m.confidence * 100)}%</b>
                       </span>

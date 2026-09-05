@@ -110,8 +110,21 @@ GENERAL_CONCEPTS: Dict[str, str] = {
 }
 
 
-def is_security_domain_query(message: str, retriever=None) -> bool:
+def is_security_domain_query(message: str, retriever=None, history=None) -> bool:
     m_low = message.strip().lower()
+
+    # If there is prior conversation history, check if this message is a contextual follow-up
+    if history:
+        followup_cues = [
+            "what is it", "what is that", "what does that mean", "what do you mean",
+            "tell me more", "explain it", "what about it", "why", "how so", "which one",
+            "does it", "is it", "who is that", "can you clarify", "details", "elaborate"
+        ]
+        words = set(re.findall(r"\b[a-z\']+\b", m_low))
+        if any(c in m_low for c in followup_cues) or \
+           m_low in ["what is it", "what is that", "why", "how", "how so", "explain"] or \
+           (len(message.split()) <= 6 and any(w in words for w in ["it", "that", "this", "they", "those", "why", "how", "what", "which"])):
+            return True
 
     if re.search(r"\b(?:question|item|control)\s*#?\s*[0-9]{1,2}\b", m_low) or re.search(r"\bq[0-9]{1,2}\b", m_low):
         return True
@@ -233,8 +246,8 @@ def handle_general_knowledge_query(message: str) -> Optional[Dict[str, Any]]:
                             f"**{candidate_expr} = {val}**\n\n"
                             "*(Note: As Regodit's AI Security Analyst, my primary focus is evaluating security controls, verifying compliance questionnaires, and analyzing our infrastructure posture. Let me know if you have questions about our security policies!)*"
                         ),
-                        "status": "answered",
-                        "confidence": 1.0,
+                        "status": "general",
+                        "confidence": None,
                         "confidenceBasis": {
                             "source_freshness": "N/A: General mathematical calculation.",
                             "directness": "Direct deterministic arithmetic calculation.",
@@ -276,8 +289,8 @@ def handle_general_knowledge_query(message: str) -> Optional[Dict[str, Any]]:
                         f"The capital of {country_title} is **{capital}**.\n\n"
                         "*(Note: As Regodit's AI Security Analyst, my primary focus is evaluating security controls, verifying vendor compliance questionnaires, and analyzing our infrastructure posture. Feel free to ask questions about our cloud infrastructure, encryption, access controls, or audit readiness!)*"
                     ),
-                    "status": "answered",
-                    "confidence": 1.0,
+                    "status": "general",
+                    "confidence": None,
                     "confidenceBasis": {
                         "source_freshness": "Authoritative world geography.",
                         "directness": "Direct factual response to general knowledge inquiry.",
@@ -314,8 +327,8 @@ def handle_general_knowledge_query(message: str) -> Optional[Dict[str, Any]]:
                 "*Because light attracts bugs!* 🐛\n\n"
                 "*(Whenever you are ready, I'm here to assist with vendor questionnaires, policy verification, or architecture reviews!)*"
             ),
-            "status": "answered",
-            "confidence": 1.0,
+            "status": "general",
+            "confidence": None,
             "confidenceBasis": {
                 "source_freshness": "Humor database.",
                 "directness": "Direct conversational response.",
@@ -344,8 +357,8 @@ def handle_general_knowledge_query(message: str) -> Optional[Dict[str, Any]]:
     if live_answer:
         return {
             "reply": live_answer,
-            "status": "answered",
-            "confidence": 1.0,
+            "status": "general",
+            "confidence": None,
             "confidenceBasis": {
                 "source_freshness": "Live LLM general intelligence.",
                 "directness": "Direct general knowledge response.",
@@ -381,8 +394,8 @@ def handle_general_knowledge_query(message: str) -> Optional[Dict[str, Any]]:
                     f"**{concept.title()}**:\n\n{definition}\n\n"
                     "*(Note: As Regodit's AI Security Analyst, my primary focus is evaluating security controls, verifying vendor compliance questionnaires, and analyzing our infrastructure posture. Feel free to ask questions about our cloud infrastructure, encryption, access controls, or audit readiness!)*"
                 ),
-                "status": "answered",
-                "confidence": 1.0,
+                "status": "general",
+                "confidence": None,
                 "confidenceBasis": {
                     "source_freshness": "General scientific / technical encyclopedia.",
                     "directness": "Direct definition response.",
@@ -423,8 +436,8 @@ def handle_general_knowledge_query(message: str) -> Optional[Dict[str, Any]]:
             "- **Subcontractor Governance & Access Deprovisioning SLAs**\n"
             "- **Penetration Testing (VAPT) & Vulnerability Remediation**"
         ),
-        "status": "answered",
-        "confidence": 1.0,
+        "status": "general",
+        "confidence": None,
         "confidenceBasis": {
             "source_freshness": "Sentinel assistant capabilities profile.",
             "directness": "Direct scope clarification.",

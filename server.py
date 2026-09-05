@@ -317,8 +317,31 @@ def chat(body: ChatBody):
         }
 
     # 2. Conversational Greetings / Introductions
+    # 2. Multi-turn contextualization: enrich follow-up queries using conversation history
+    recent_user_turns = [h.text for h in body.history if h.role == "user"]
+    is_followup = False
+    if recent_user_turns:
+        m_strip = message.strip().lower().strip("?!. ")
+        followup_cues = [
+            "what is it", "what is that", "what does that mean", "what do you mean",
+            "tell me more", "explain it", "what about it", "why", "how so", "which one",
+            "does it", "is it", "who is that", "can you clarify", "details", "elaborate"
+        ]
+        words = set(re.findall(r"\b[a-z\']+\b", m_strip))
+        if any(c in m_strip for c in followup_cues) or \
+           m_strip in ["what is it", "what is that", "why", "how", "how so", "explain"] or \
+           (len(message.split()) <= 6 and any(w in words for w in ["it", "that", "this", "they", "those", "why", "how", "what", "which"])):
+            is_followup = True
+
+    if is_followup and recent_user_turns:
+        last_turn = recent_user_turns[-1]
+        retrieval_query = f"{last_turn} {message}"
+    else:
+        retrieval_query = message
+
+    # 3. Conversational Greetings / Introductions (standalone greetings only)
     greeting_pattern = r"^\s*(?:hi|hello|hey|greetings|good\s+(?:morning|afternoon|evening)|who\s+are\s+you|what\s+can\s+you\s+do|help)\b[\s\.\!\?]*$"
-    if re.match(greeting_pattern, message, re.IGNORECASE):
+    if re.match(greeting_pattern, message, re.IGNORECASE) and not body.history:
         return {
             "reply": (
                 "Hello! I am **Sentinel**, Regodit's autonomous AI Security Analyst.\n\n"
@@ -331,8 +354,8 @@ def chat(body: ChatBody):
                 "- **Vendor & Subcontractor Governance**\n"
                 "- **Access Deprovisioning & Offboarding SLAs**"
             ),
-            "status": "answered",
-            "confidence": 1.0,
+            "status": "conversational",
+            "confidence": None,
             "confidenceBasis": {
                 "source_freshness": "Current: Sentinel assistant profile.",
                 "directness": "Direct capabilities statement.",
@@ -356,24 +379,13 @@ def chat(body: ChatBody):
             "questionId": None,
         }
 
-    # 3. General Knowledge & Conversational Intelligence (Capitals, Math, Concepts, Trivia)
+    # 4. General Knowledge & Conversational Intelligence (Capitals, Math, Concepts, Trivia)
     # If the user asks normal world-knowledge questions (e.g. "What is the capital of France?", "2+2", "What is machine learning?"),
     # answer intelligently WITHOUT querying internal security documents or fabricating false policy citations!
-    if not general_analyst.is_security_domain_query(message, retriever=RETRIEVER):
+    if not is_followup and not general_analyst.is_security_domain_query(message, retriever=RETRIEVER, history=body.history):
         gen_ans = general_analyst.handle_general_knowledge_query(message)
         if gen_ans:
             return gen_ans
-
-    # 4. Multi-turn contextualization: enrich query using recent history turns
-    recent_user_turns = [h.text for h in body.history if h.role == "user"]
-    if recent_user_turns:
-        last_turn = recent_user_turns[-1]
-        is_followup = len(message.split()) <= 7 or any(
-            w in message.lower() for w in ["it", "that", "this", "they", "those", "what about", "how about", "and", "too", "also", "what if", "does it", "is it"]
-        )
-        retrieval_query = f"{last_turn} {message}" if is_followup else message
-    else:
-        retrieval_query = message
 
     # 3. Always execute real-time GraphTreeRetriever traversal on the incoming question
     result = process_question(retrieval_query, RETRIEVER, top_k=12)
