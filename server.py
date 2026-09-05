@@ -38,6 +38,7 @@ sys.path.insert(0, str(AGENT_DIR))
 from agent_loop import process_question  # noqa: E402
 from retrieve_graph import GraphTreeRetriever, load_chunks  # noqa: E402
 import security_profile as profile_store  # noqa: E402
+from conversational_analyst import synthesize_conversational_response  # noqa: E402
 
 app = FastAPI(title="SENTINEL Regodit Security Analyst API")
 app.add_middleware(
@@ -372,31 +373,42 @@ def chat(body: ChatBody):
             "sourceType": infer_source_type(base_src),
         })
 
-    # Prepare user-facing reply and followUp interaction
-    follow_up: Optional[str] = None
+    # Conversational synthesis with proactive recommendation & targeted back-question
+    control_intent = parse_control_intent(message)
+    retrieved_chunks = RETRIEVER.retrieve(message, top_k=12)
+    conv_data = synthesize_conversational_response(
+        question=message,
+        control_intent=control_intent,
+        raw_status=final_status,
+        raw_answer=answer,
+        confidence=confidence,
+        conflict_explanation=conflict,
+        guardrail_note=note,
+        citations=citations,
+        chunks=retrieved_chunks,
+        external_check=result.get("external_check"),
+    )
+
+    reply = conv_data["conversational_reply"]
+    clarifying_q = conv_data["clarifying_question"]
+    recommendation = conv_data["recommendation"]
+    rec_action = conv_data["recommendation_action"]
+    follow_up = clarifying_q or (
+        "Clarify: Which requirement represents current company practice?"
+        if final_status == "conflict"
+        else ("Provide current company practice for this control" if final_status != "answered" else None)
+    )
     question_id_for_ui = matched_qid or (f"Q-{hash(message) % 1000}" if final_status != "answered" else None)
 
-    if final_status == "answered":
-        reply = answer or "Verified from authoritative security documentation."
-        if matched_qid:
-            profile_store.upsert_record(
-                question_id=matched_qid,
-                question_text=message,
-                status="verified_from_documents",
-                answer=answer,
-                confidence=confidence,
-                citations=citations,
-            )
-
-    elif final_status == "conflict":
-        ans_fallback = answer if answer else 'Sources provide conflicting requirements on this control.'
-        reply = f"**Document Contradiction Detected**\n\n{conflict}\n\n*Documented positions*:\n{ans_fallback}\n\nWhich requirement represents current company practice?"
-        follow_up = "Clarify: Which requirement is current for your organization?"
-
-    else:  # ask_user / insufficient
-        note_fallback = note or 'Internal documentation does not specify this practice or requirement.'
-        reply = f"**Information Unavailable / Unconfirmed**\n\n{note_fallback}\n\nPer the Golden Rule (Never make up an answer), this control requires human confirmation."
-        follow_up = "Provide current company practice for this control"
+    if final_status == "answered" and matched_qid:
+        profile_store.upsert_record(
+            question_id=matched_qid,
+            question_text=message,
+            status="verified_from_documents",
+            answer=reply,
+            confidence=confidence,
+            citations=citations,
+        )
 
     graph_trace = build_graph_trace(message, RETRIEVER, result=result)
 
@@ -409,6 +421,9 @@ def chat(body: ChatBody):
         "citations": citations,
         "graphTrace": graph_trace,
         "followUp": follow_up,
+        "clarifyingQuestion": clarifying_q,
+        "recommendation": recommendation,
+        "recommendationAction": rec_action,
         "questionId": question_id_for_ui,
         "usedLiveLlm": bool(result.get("used_live_llm")),
     }

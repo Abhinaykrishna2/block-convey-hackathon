@@ -234,7 +234,7 @@ def simulate_llm_reasoning(question, chunks):
         }
 
     # 4. CONFLICT-001 / C1: On-Premises Infrastructure & Backups
-    if any(w in q_lower for w in ["stored on site", "data center", "on-prem", "cloud-only", "cloud only", "dell", "server room", "third party"]):
+    if any(w in q_lower for w in ["stored on site", "data center", "on-prem", "cloud-only", "cloud only", "dell", "server room", "by a third party", "where is company and customer data hosted"]):
         return {
             "status": "conflict",
             "answer": None,

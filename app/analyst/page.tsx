@@ -31,6 +31,9 @@ type Message = {
   graphTrace?: Trace;
   pending?: boolean;
   followUp?: string | null;
+  clarifyingQuestion?: string | null;
+  recommendation?: string | null;
+  recommendationAction?: string | null;
   questionId?: string;
   asked?: string;
 };
@@ -161,6 +164,9 @@ export default function Analyst() {
         citations?: Citation[];
         graphTrace?: Trace;
         followUp?: string | null;
+        clarifyingQuestion?: string | null;
+        recommendation?: string | null;
+        recommendationAction?: string | null;
         questionId?: string;
       };
       setOpen((o) => ({ ...o, [pendingId]: true }));
@@ -178,6 +184,9 @@ export default function Analyst() {
               graphTrace: data.graphTrace ?? m.graphTrace,
               pending: false,
               followUp: data.followUp ?? null,
+              clarifyingQuestion: data.clarifyingQuestion ?? null,
+              recommendation: data.recommendation ?? null,
+              recommendationAction: data.recommendationAction ?? null,
               questionId: data.questionId,
               asked: message,
             }
@@ -223,36 +232,54 @@ export default function Analyst() {
       <main>
       <div className="thread">
         {messages.length === 0 && (
-          <div className="starters" style={{ padding: "44px 0 20px", alignItems: "flex-start", width: "100%" }}>
-            <div className="eyebrow">Interactive Security Analyst</div>
-            <h2 style={{ margin: "0 0 8px", fontSize: "28px" }}>What do you want to investigate?</h2>
-            <p className="empty" style={{ marginBottom: "20px" }}>
-              Sentinel traverses the verified evidence graph, cites verbatim sources, flags contradictions, and escalates to human stakeholders when information is unavailable.
+          <div className="starters" style={{ padding: "36px 0 20px", alignItems: "flex-start", width: "100%" }}>
+            <div className="eyebrow">Autonomous AI Security Analyst</div>
+            <h2 style={{ margin: "0 0 8px", fontSize: "28px" }}>How can I assist with your security review?</h2>
+            <p className="empty" style={{ marginBottom: "20px", maxWidth: "680px", lineHeight: 1.55 }}>
+              Ask any question regarding our security posture, infrastructure, or compliance controls. I will retrieve grounded facts from our company corpus, detect contradictions, cite exact sources, and ask clarifying questions with actionable recommendations if anything is unclear.
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "720px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "10px", width: "100%", maxWidth: "780px" }}>
               <button
                 type="button"
                 className="starter"
-                onClick={() => void send("Does your organization have a formal Information Security Program established?")}
+                onClick={() => void send("How do we encrypt customer data in transit and at rest?")}
               >
-                <b style={{ color: "var(--ok)", marginRight: "8px" }}>✓ Verified (Q1.0):</b>
-                Does your organization have a formal Information Security Program established?
+                🔒 <b>Data Encryption:</b> How do we encrypt in transit & at rest?
               </button>
               <button
                 type="button"
                 className="starter"
                 onClick={() => void send("Where is company and customer data hosted?")}
               >
-                <b style={{ color: "var(--warn)", marginRight: "8px" }}>⚠ Conflict (Q22.0):</b>
-                Where is company and customer data hosted? (Cloud vs On-Prem contradiction)
+                🏢 <b>Hosting:</b> Where is customer data hosted and backed up?
               </button>
               <button
                 type="button"
                 className="starter"
-                onClick={() => void send("Will you be using third party contractors or sub-contractors to complete the engagement?")}
+                onClick={() => void send("Do we require replay-resistant multi-factor authentication?")}
               >
-                <b style={{ color: "var(--acc2)", marginRight: "8px" }}>? Needs Input (Q6.0):</b>
-                Will you be using third party contractors or sub-contractors to complete the engagement?
+                🔐 <b>Authentication:</b> Do we require replay-resistant MFA?
+              </button>
+              <button
+                type="button"
+                className="starter"
+                onClick={() => void send("Will we be using third-party contractors for development?")}
+              >
+                👥 <b>Vendors:</b> Will we be using third-party contractors?
+              </button>
+              <button
+                type="button"
+                className="starter"
+                onClick={() => void send("What is our employee and contractor offboarding SLA?")}
+              >
+                ⏱ <b>Offboarding:</b> What is our access revocation SLA?
+              </button>
+              <button
+                type="button"
+                className="starter"
+                onClick={() => void send("How are backups and disaster recovery tested?")}
+              >
+                💾 <b>BC/DR:</b> How are backups and disaster recovery tested?
               </button>
             </div>
           </div>
@@ -342,7 +369,107 @@ export default function Analyst() {
                       ))}
                     </div>
                   )}
-                  {m.followUp && (
+                  {(m.clarifyingQuestion || m.recommendation) ? (
+                    <div style={{
+                      marginTop: "14px",
+                      padding: "16px 18px",
+                      borderRadius: "10px",
+                      background: "rgba(194, 99, 44, 0.05)",
+                      border: "1px solid rgba(194, 99, 44, 0.25)",
+                    }}>
+                      {m.clarifyingQuestion && (
+                        <div style={{ marginBottom: "12px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}>
+                            <span style={{ fontSize: "13px" }}>❓</span>
+                            <b style={{ fontSize: "12px", color: "var(--acc2)", textTransform: "uppercase", letterSpacing: "0.07em" }}>
+                              Clarification Requested
+                            </b>
+                          </div>
+                          <div style={{ fontSize: "14px", color: "var(--tx)", fontWeight: 500, lineHeight: 1.5 }}>
+                            {m.clarifyingQuestion}
+                          </div>
+                        </div>
+                      )}
+
+                      {m.recommendation && (
+                        <div style={{
+                          padding: "11px 14px",
+                          borderRadius: "8px",
+                          background: "rgba(255, 255, 255, 0.85)",
+                          border: "1px solid rgba(194, 99, 44, 0.18)",
+                          marginBottom: "13px",
+                          fontSize: "13px",
+                          lineHeight: 1.55,
+                        }}>
+                          <div style={{ fontWeight: 700, color: "#9a5b32", marginBottom: "3px", display: "flex", alignItems: "center", gap: "6px" }}>
+                            <span>💡</span> Recommended Operational Standard:
+                          </div>
+                          <div style={{ color: "var(--tx2)" }}>
+                            {m.recommendation}
+                          </div>
+                        </div>
+                      )}
+
+                      <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
+                        {m.recommendationAction && (
+                          <button
+                            type="button"
+                            style={{
+                              background: "var(--acc2)",
+                              color: "#fff",
+                              border: "none",
+                              borderRadius: "7px",
+                              padding: "8px 16px",
+                              fontSize: "13px",
+                              fontWeight: 600,
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+                            }}
+                            onClick={() => {
+                              setAnswering({
+                                questionId: m.questionId || (m.status === "conflict" ? "conflict_resolution" : "ask_user"),
+                                question: m.asked ?? m.text,
+                                followUp: m.clarifyingQuestion || "Recommended standard",
+                              });
+                              void send(m.recommendationAction!);
+                            }}
+                          >
+                            ✓ Accept Recommendation
+                          </button>
+                        )}
+
+                        <button
+                          type="button"
+                          style={{
+                            background: "transparent",
+                            color: "var(--tx)",
+                            border: "1px solid var(--line)",
+                            borderRadius: "7px",
+                            padding: "8px 14px",
+                            fontSize: "13px",
+                            fontWeight: 500,
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            setAnswering({
+                              questionId: m.questionId || (m.status === "conflict" ? "conflict_resolution" : "ask_user"),
+                              question: m.asked ?? m.text,
+                              followUp: m.clarifyingQuestion || "Clarify",
+                            });
+                            if (m.recommendationAction) {
+                              setDraft(m.recommendationAction);
+                            }
+                            setTimeout(() => inputRef.current?.focus(), 60);
+                          }}
+                        >
+                          ✎ Type Custom Answer
+                        </button>
+                      </div>
+                    </div>
+                  ) : m.followUp ? (
                     <button
                       type="button"
                       className="follow"
@@ -357,7 +484,7 @@ export default function Analyst() {
                     >
                       {m.followUp}
                     </button>
-                  )}
+                  ) : null}
                   {m.graphTrace && (
                     <>
                       <button className="reveal" onClick={() => setOpen((o) => ({ ...o, [m.id]: !o[m.id] }))}>
@@ -416,7 +543,7 @@ export default function Analyst() {
           ref={inputRef}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder={answering ? "Type the current practice / stakeholder resolution…" : "Ask the security agent (e.g. Q1.0, Q22.0, Q6.0)…"}
+          placeholder={answering ? "Type your answer or confirm the recommendation…" : "Ask a security question, policy inquiry, or compliance control…"}
           disabled={busy}
         />
         <button className="primary" disabled={busy || !draft.trim()} type="submit">
