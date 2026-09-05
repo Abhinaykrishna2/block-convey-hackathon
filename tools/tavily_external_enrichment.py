@@ -19,6 +19,7 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,10 +63,10 @@ TAVILY_CASES = [
     {
         "id": "github-security-controls",
         "external_use_case": "vendor_trust_validation",
-        "query": "GitHub Enterprise security features MFA branch protection audit logs official",
+        "query": "GitHub Enterprise security features MFA branch protection audit logs official documentation",
         "supplements": "claim:sdlc:live_controls",
         "target_type": "Claim",
-        "include_domains": ["docs.github.com", "github.com"],
+        "include_domains": ["docs.github.com"],
     },
     {
         "id": "google-workspace-mfa-security",
@@ -169,7 +170,7 @@ def tavily_search(api_key: str, case: dict[str, Any], max_results: int, search_d
     body = {
         "query": case["query"],
         "search_depth": search_depth,
-        "max_results": max_results,
+        "max_results": max(max_results * 3, 5),
         "include_answer": "basic",
         "include_raw_content": False,
         "include_domains": case.get("include_domains", []),
@@ -196,7 +197,13 @@ def tavily_search(api_key: str, case: dict[str, Any], max_results: int, search_d
 
 def facts_from_response(case: dict[str, Any], response: dict[str, Any], max_results: int) -> list[dict[str, Any]]:
     facts = []
-    for rank, result in enumerate(response.get("results", [])[:max_results], start=1):
+    allowed_domains = case.get("include_domains", [])
+    filtered = [
+        result
+        for result in response.get("results", [])
+        if url_matches_allowed_domains(result.get("url", ""), allowed_domains)
+    ][:max_results]
+    for rank, result in enumerate(filtered, start=1):
         facts.append(
             {
                 "id": f"{case['id']}-{rank}",
@@ -214,6 +221,13 @@ def facts_from_response(case: dict[str, Any], response: dict[str, Any], max_resu
             }
         )
     return facts
+
+
+def url_matches_allowed_domains(url: str, allowed_domains: list[str]) -> bool:
+    if not allowed_domains:
+        return True
+    host = urlparse(url).netloc.lower().split("@")[-1].split(":")[0]
+    return any(host == domain or host.endswith("." + domain) for domain in allowed_domains)
 
 
 def dry_run_fact(case: dict[str, Any]) -> dict[str, Any]:
