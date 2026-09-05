@@ -17,6 +17,14 @@ Generated artifacts for importing the enriched security corpus into Neo4j.
 - Nodes: 9646
 - Relationships: 10523
 
+## Snapshot Freshness
+
+This is a static point-in-time corpus snapshot. Rebuild after evidence or operational state changes; it does not query live systems.
+
+## Action Resolutions
+
+Action-item status is loaded from `graph/action_resolutions.json`. Resolution metadata records who closed an item, when, and supporting evidence. Closing an action item does not silently resolve an underlying source contradiction.
+
 ## External Data Rule
 
-Tavily results are optional and must be loaded as `ExternalFact` nodes only. They may `SUPPLEMENTS` internal claims, findings, or obligations, but must not overwrite internal `Claim` or `EvidenceBlock` records.
+External enrichment is optional and must be loaded as `ExternalFact` nodes only. Each node retains its declared provider. It may `SUPPLEMENTS` internal claims, findings, or obligations, but must not overwrite internal `Claim` or `EvidenceBlock` records.

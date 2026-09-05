@@ -25,7 +25,8 @@ A property graph keeps those distinctions explicit. The agent can walk from a qu
 - `AssessmentFinding`: VAPT or SOC 2 finding, observation, severity, or remediation status.
 - `ContractObligation`: contractual obligation around confidentiality, breach notice, data return, deletion, or security standards.
 - `Conflict`: contradiction or unresolved ambiguity from the master corpus index and deterministic rules.
-- `ActionItem`: human follow-up, remediation, template cleanup, or confirmation needed.
+- `ActionItem`: human follow-up, remediation, template cleanup, or confirmation needed. Its `open` or
+  `resolved` status is loaded from the versioned action-resolution store and records closure provenance.
 - `ExternalFact`: optional external evidence from Tavily, isolated from internal evidence.
 
 ## Relationship Types
@@ -78,7 +79,16 @@ Good Tavily uses:
 - External breach/news signals for named vendors.
 - Public legal/company facts where internal records conflict.
 
-Tavily results must be stored as `ExternalFact` nodes with retrieval date, URL, and `source = external`.
+External results must be stored as `ExternalFact` nodes with retrieval date, URL, declared provider, and
+`source = external`. They may supplement an internal claim but never replace it.
+
+## Snapshot And Resolution State
+
+The graph is a static point-in-time corpus snapshot. Rebuild it whenever corpus evidence or operational
+state changes; it does not query live systems during normal graph construction. A human may close an
+action item through `graph/action_resolutions.json`, recording `resolved_at`, `resolved_by`, a note, and
+supporting evidence. That closure changes only the action item: an underlying contradiction remains visible
+until the corpus itself documents its resolution.
 
 ## Build
 
@@ -116,7 +126,7 @@ Current expected output:
 - 26 source files
 - 28 curated corpus documents
 - 66 questionnaire questions
-- 7 known conflicts
+- At least 7 known conflicts, preserving the baseline while allowing new detections
 - 21 control areas
 
 The validator asserts the key counts and checks that conflicts, citations, questionnaire mappings, action items, and external-fact isolation behave as expected.

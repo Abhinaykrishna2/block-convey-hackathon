@@ -21,6 +21,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CORPUS = ROOT
 DEFAULT_OUTPUT = ROOT / "graph" / "out"
+DEFAULT_ACTION_RESOLUTIONS = ROOT / "graph" / "action_resolutions.json"
+ACTION_STATUSES = {"open", "resolved"}
 
 
 CONTROL_AREAS = [
@@ -351,7 +353,7 @@ OBLIGATION_RULES = [
 
 def main() -> None:
     args = parse_args()
-    graph = SecurityGraphBuilder(args.corpus, args.external_facts)
+    graph = SecurityGraphBuilder(args.corpus, args.external_facts, args.action_resolutions)
     payload = graph.build()
     write_outputs(payload, args.output)
     print_summary(payload, args.output)
@@ -365,15 +367,27 @@ def parse_args() -> argparse.Namespace:
         "--external-facts",
         type=Path,
         default=None,
-        help="Optional Tavily result JSON file; stored as isolated ExternalFact nodes.",
+        help="Optional external enrichment JSON file; stored as isolated ExternalFact nodes.",
+    )
+    parser.add_argument(
+        "--action-resolutions",
+        type=Path,
+        default=DEFAULT_ACTION_RESOLUTIONS,
+        help="JSON action-resolution store applied without changing corpus evidence.",
     )
     return parser.parse_args()
 
 
 class SecurityGraphBuilder:
-    def __init__(self, corpus_root: Path, external_facts_path: Path | None) -> None:
+    def __init__(
+        self,
+        corpus_root: Path,
+        external_facts_path: Path | None,
+        action_resolutions_path: Path | None,
+    ) -> None:
         self.corpus_root = corpus_root
         self.external_facts_path = external_facts_path
+        self.action_resolutions_path = action_resolutions_path
         self.nodes: dict[str, dict[str, Any]] = {}
         self.relationships: list[dict[str, Any]] = []
         self.relationship_keys: set[tuple[str, str, str]] = set()
@@ -386,6 +400,7 @@ class SecurityGraphBuilder:
         self.index = load_json(corpus_root / "corpus_text/00_INDEX/master_corpus_index.json")
         self.manifest = load_json(corpus_root / "evidence/source_manifest.json")
         self.questionnaire = load_json(corpus_root / "evidence/questionnaire.json")
+        self.action_resolutions = load_action_resolutions(action_resolutions_path)
         self.documents_by_source = {
             document["source"]: document for document in self.index.get("documents", [])
         }
@@ -401,6 +416,7 @@ class SecurityGraphBuilder:
         self.add_conflicts()
         self.add_questionnaire_questions()
         self.add_external_facts()
+        self.validate_action_resolution_targets()
         return {
             "metadata": self.metadata(),
             "nodes": list(self.nodes.values()),
@@ -427,7 +443,23 @@ class SecurityGraphBuilder:
             "node_counts": dict(sorted(node_counts.items())),
             "relationship_counts": dict(sorted(rel_counts.items())),
             "decision_counts": dict(sorted(decision_counts.items())),
-            "external_fact_policy": "Tavily results are stored only as ExternalFact nodes and never overwrite internal claims.",
+            "snapshot_model": "static_point_in_time_corpus",
+            "freshness_rule": "Rebuild after evidence or operational state changes; this graph does not query live systems.",
+            "action_resolution_store": (
+                project_relative_path(self.action_resolutions_path)
+                if self.action_resolutions_path
+                else "not_configured"
+            ),
+            "action_status_counts": dict(
+                sorted(
+                    Counter(
+                        node["properties"].get("status")
+                        for node in self.nodes.values()
+                        if "ActionItem" in node["labels"]
+                    ).items()
+                )
+            ),
+            "external_fact_policy": "External enrichment is stored only as ExternalFact nodes and never overwrites internal claims.",
         }
 
     def load_markdown_blocks(self) -> None:
@@ -769,7 +801,7 @@ class SecurityGraphBuilder:
             node_id = "external:" + fact_id
             props = {
                 "id": node_id,
-                "provider": "tavily",
+                "provider": str(fact.get("provider") or payload.get("provider") or "tavily"),
                 "source": "external",
                 "external_use_case": fact.get("external_use_case", ""),
                 "title": fact.get("title", ""),
@@ -791,6 +823,7 @@ class SecurityGraphBuilder:
     def add_action_item(
         self, action_id: str, title: str, severity: str, description: str, areas: list[str]
     ) -> None:
+        resolution = self.action_resolutions.get(action_id, {})
         self.add_node(
             action_id,
             ["ActionItem"],
@@ -799,7 +832,12 @@ class SecurityGraphBuilder:
                 "title": title,
                 "severity": severity,
                 "description": description,
-                "status": "open",
+                "status": resolution.get("status", "open"),
+                "status_source": "resolution_file" if resolution else "graph_build",
+                "resolved_at": resolution.get("resolved_at", ""),
+                "resolved_by": resolution.get("resolved_by", ""),
+                "resolution_note": resolution.get("resolution_note", ""),
+                "resolution_evidence": resolution.get("resolution_evidence", []),
                 "mapped_control_areas": areas,
             },
         )
@@ -807,6 +845,16 @@ class SecurityGraphBuilder:
             self.action_items_by_area[area].append(action_id)
             if "control:" + area in self.nodes:
                 self.add_relationship(action_id, "MAPS_TO", "control:" + area)
+
+    def validate_action_resolution_targets(self) -> None:
+        action_ids = {
+            node_id for node_id, node in self.nodes.items() if "ActionItem" in node["labels"]
+        }
+        unknown = sorted(set(self.action_resolutions) - action_ids)
+        if unknown:
+            raise ValueError(
+                "Action resolution entries do not match generated ActionItem IDs: " + ", ".join(unknown)
+            )
 
     def add_node(self, node_id: str, labels: list[str], properties: dict[str, Any]) -> None:
         current = self.nodes.get(node_id)
@@ -944,9 +992,17 @@ Generated artifacts for importing the enriched security corpus into Neo4j.
 - Nodes: {len(payload["nodes"])}
 - Relationships: {len(payload["relationships"])}
 
+## Snapshot Freshness
+
+This is a static point-in-time corpus snapshot. Rebuild after evidence or operational state changes; it does not query live systems.
+
+## Action Resolutions
+
+Action-item status is loaded from `{meta["action_resolution_store"]}`. Resolution metadata records who closed an item, when, and supporting evidence. Closing an action item does not silently resolve an underlying source contradiction.
+
 ## External Data Rule
 
-Tavily results are optional and must be loaded as `ExternalFact` nodes only. They may `SUPPLEMENTS` internal claims, findings, or obligations, but must not overwrite internal `Claim` or `EvidenceBlock` records.
+External enrichment is optional and must be loaded as `ExternalFact` nodes only. Each node retains its declared provider. It may `SUPPLEMENTS` internal claims, findings, or obligations, but must not overwrite internal `Claim` or `EvidenceBlock` records.
 """
 
 
@@ -963,6 +1019,46 @@ def print_summary(payload: dict[str, Any], output_dir: Path) -> None:
 
 def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def project_relative_path(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(ROOT.resolve()).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def load_action_resolutions(path: Path | None) -> dict[str, dict[str, Any]]:
+    if not path or not path.exists():
+        return {}
+    payload = load_json(path)
+    if not isinstance(payload, dict):
+        raise ValueError(f"Action resolutions in {path} must be a JSON object.")
+    entries = payload.get("action_items", {})
+    if not isinstance(entries, dict):
+        raise ValueError(f"Action resolutions in {path} must contain an action_items object.")
+
+    resolutions: dict[str, dict[str, Any]] = {}
+    for action_id, entry in entries.items():
+        if not isinstance(action_id, str) or not isinstance(entry, dict):
+            raise ValueError(f"Invalid action resolution entry in {path}.")
+        status = entry.get("status")
+        if status not in ACTION_STATUSES:
+            allowed = ", ".join(sorted(ACTION_STATUSES))
+            raise ValueError(f"Action {action_id} in {path} must use one of: {allowed}.")
+        if status == "resolved" and not entry.get("resolved_at"):
+            raise ValueError(f"Resolved action {action_id} in {path} must include resolved_at.")
+        evidence = entry.get("resolution_evidence", [])
+        if not isinstance(evidence, list) or not all(isinstance(item, str) for item in evidence):
+            raise ValueError(f"resolution_evidence for {action_id} in {path} must be a list of strings.")
+        resolutions[action_id] = {
+            "status": status,
+            "resolved_at": str(entry.get("resolved_at", "")),
+            "resolved_by": str(entry.get("resolved_by", "")),
+            "resolution_note": str(entry.get("resolution_note", "")),
+            "resolution_evidence": evidence,
+        }
+    return resolutions
 
 
 def source_id(path: str) -> str:

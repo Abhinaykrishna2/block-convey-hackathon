@@ -1,5 +1,9 @@
 {
   "metadata": {
+    "action_resolution_store": "graph/action_resolutions.json",
+    "action_status_counts": {
+      "open": 42
+    },
     "corpus_title": "Regodit AI Security & Compliance Knowledge Base",
     "curated_document_count": 28,
     "decision_counts": {
@@ -8,8 +12,9 @@
       "ASK_USER": 15,
       "UNKNOWN": 1
     },
-    "external_fact_policy": "Tavily results are stored only as ExternalFact nodes and never overwrite internal claims.",
-    "generated_from": "/private/tmp/black-convey-hackathon-push",
+    "external_fact_policy": "External enrichment is stored only as ExternalFact nodes and never overwrites internal claims.",
+    "freshness_rule": "Rebuild after evidence or operational state changes; this graph does not query live systems.",
+    "generated_from": "/private/tmp/prismaccess-pr",
     "node_counts": {
       "ActionItem": 42,
       "AssessmentFinding": 3,
@@ -39,6 +44,7 @@
       "SUPPORTED_BY": 106,
       "VIOLATES_OR_WEAKENS": 6
     },
+    "snapshot_model": "static_point_in_time_corpus",
     "source_count": 26
   },
   "nodes": [
@@ -1179,8 +1185,13 @@
         "mapped_control_areas": [
           "governance"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Complete placeholder or unsigned document metadata"
       }
     },
@@ -1255,8 +1266,13 @@
         "mapped_control_areas": [
           "governance"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Complete placeholder or unsigned document metadata"
       }
     },
@@ -1291,8 +1307,13 @@
         "mapped_control_areas": [
           "governance"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Complete placeholder or unsigned document metadata"
       }
     },
@@ -1367,8 +1388,13 @@
         "mapped_control_areas": [
           "governance"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Complete placeholder or unsigned document metadata"
       }
     },
@@ -1423,8 +1449,13 @@
         "mapped_control_areas": [
           "governance"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Complete placeholder or unsigned document metadata"
       }
     },
@@ -1559,8 +1590,13 @@
         "mapped_control_areas": [
           "governance"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Complete placeholder or unsigned document metadata"
       }
     },
@@ -1695,8 +1731,13 @@
         "mapped_control_areas": [
           "governance"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Complete placeholder or unsigned document metadata"
       }
     },
@@ -1731,8 +1772,13 @@
         "mapped_control_areas": [
           "governance"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Complete placeholder or unsigned document metadata"
       }
     },
@@ -162011,8 +162057,13 @@
           "network_security",
           "asset_management"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "CRITICAL",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Resolve On-Premises Infrastructure & Backups"
       }
     },
@@ -162075,8 +162126,13 @@
           "network_security",
           "logging_monitoring"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Resolve Centralized SIEM & Observability"
       }
     },
@@ -162137,8 +162193,13 @@
         "mapped_control_areas": [
           "legal_identity"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Resolve Company Legal Name & W-9 Entity"
       }
     },
@@ -162203,8 +162264,13 @@
           "production_access",
           "offboarding"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Resolve Employee & Contractor Offboarding Execution"
       }
     },
@@ -162265,8 +162331,13 @@
         "mapped_control_areas": [
           "backup_recovery"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Resolve Company Headcount & Incorporation Date"
       }
     },
@@ -162328,8 +162399,13 @@
           "governance",
           "secure_coding"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Resolve Secure Development Lifecycle (SDLC) Completeness"
       }
     },
@@ -162391,8 +162467,13 @@
           "web_app_security",
           "vulnerability_management"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Resolve Vulnerability Assessment Findings & Remediation Status"
       }
     },
@@ -162477,8 +162558,13 @@
         "mapped_control_areas": [
           "governance"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 3.0"
       }
     },
@@ -162564,8 +162650,13 @@
           "governance",
           "vendor_risk"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 6.0"
       }
     },
@@ -162796,8 +162887,13 @@
           "access_control",
           "privacy"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 15.0"
       }
     },
@@ -162883,8 +162979,13 @@
         "mapped_control_areas": [
           "privacy"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 18.0"
       }
     },
@@ -162928,8 +163029,13 @@
           "encryption_in_transit",
           "vendor_risk"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 19.0"
       }
     },
@@ -163025,8 +163131,13 @@
           "physical_security",
           "vendor_risk"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 22.0"
       }
     },
@@ -163096,8 +163207,13 @@
           "encryption_at_rest",
           "encryption_in_transit"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 24.0"
       }
     },
@@ -163161,8 +163277,13 @@
           "access_control",
           "physical_security"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 26.0"
       }
     },
@@ -163200,8 +163321,13 @@
         "mapped_control_areas": [
           "physical_security"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 27.0"
       }
     },
@@ -163241,8 +163367,13 @@
           "asset_management",
           "physical_security"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 28.0"
       }
     },
@@ -163425,8 +163556,13 @@
           "governance",
           "web_app_security"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 35.0"
       }
     },
@@ -163466,8 +163602,13 @@
           "data_storage",
           "secure_coding"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 36.0"
       }
     },
@@ -163507,8 +163648,13 @@
           "logging_monitoring",
           "secure_coding"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 37.0"
       }
     },
@@ -163615,8 +163761,13 @@
         "mapped_control_areas": [
           "backup_recovery"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 41.0"
       }
     },
@@ -163681,8 +163832,13 @@
           "incident_response",
           "logging_monitoring"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 43.0"
       }
     },
@@ -163724,8 +163880,13 @@
           "logging_monitoring",
           "network_security"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 44.0"
       }
     },
@@ -163789,8 +163950,13 @@
           "incident_response",
           "logging_monitoring"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 46.0"
       }
     },
@@ -163855,8 +164021,13 @@
           "incident_response",
           "logging_monitoring"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 48.0"
       }
     },
@@ -163898,8 +164069,13 @@
           "logging_monitoring",
           "vendor_risk"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 49.0"
       }
     },
@@ -163941,8 +164117,13 @@
           "network_security",
           "production_access"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 50.0"
       }
     },
@@ -163984,8 +164165,13 @@
           "network_security",
           "production_access"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 51.0"
       }
     },
@@ -164029,8 +164215,13 @@
           "network_security",
           "production_access"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 52.0"
       }
     },
@@ -164074,8 +164265,13 @@
           "network_security",
           "production_access"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 53.0"
       }
     },
@@ -164219,8 +164415,13 @@
           "asset_management",
           "mfa"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 58.0"
       }
     },
@@ -164262,8 +164463,13 @@
           "asset_management",
           "mfa"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 59.0"
       }
     },
@@ -164333,8 +164539,13 @@
           "governance",
           "mfa"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "MEDIUM",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 61.0"
       }
     },
@@ -164472,8 +164683,13 @@
           "governance",
           "vulnerability_management"
         ],
+        "resolution_evidence": [],
+        "resolution_note": "",
+        "resolved_at": "",
+        "resolved_by": "",
         "severity": "HIGH",
         "status": "open",
+        "status_source": "graph_build",
         "title": "Confirm questionnaire item 66.0"
       }
     },

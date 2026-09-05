@@ -5,6 +5,7 @@ This directory contains the graph architecture approach for comparing data enric
 - `ARCHITECTURE.md`: graph model, evidence rules, conflict handling, Tavily boundary, and expected counts.
 - `build_security_graph.py`: deterministic builder that converts the cleaned corpus into graph artifacts.
 - `external_facts.example.json`: optional Tavily-style external fact input.
+- `action_resolutions.json`: versioned state store for human-confirmed action-item closure.
 - `SAMPLE_QUERIES.cypher`: Neo4j queries for comparing answers, conflicts, unresolved questions, VAPT findings, and contract obligations.
 - `out/`: generated artifacts, if committed or produced locally.
 - `../tools/tavily_external_enrichment.py`: optional Tavily collector for standards, vendor trust pages, and VAPT remediation context.
@@ -15,6 +16,10 @@ Build and validate:
 python3 graph/build_security_graph.py
 python3 tools/validate_security_graph.py
 ```
+
+Action resolutions use stable `ActionItem` IDs from the generated graph. Copy the schema from
+`action_resolutions.example.json`, replace its placeholder ID, and rebuild. Resolving an action item
+does not remove the source conflict that originally created it.
 
 Run Tavily enrichment:
 
