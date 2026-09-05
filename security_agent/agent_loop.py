@@ -115,6 +115,9 @@ def _extract_json(text):
             text = brace_match.group(0)
     return json.loads(text)
 
+extract_json = _extract_json
+MODEL_NAME = "claude-sonnet-5"
+
 def call_llm(prompt, max_retries=2):
     """
     Real Claude API call. Retries once on a JSON-parse failure by

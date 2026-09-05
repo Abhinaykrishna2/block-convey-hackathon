@@ -21,9 +21,14 @@ LIVE MODE: evaluate_user_reply() now calls the real Anthropic API (same
 mock on any failure so a flaky connection never breaks the demo.
 """
 import json
-from agent_loop import process_question, load_chunks, call_llm, extract_json, MODEL_NAME
-from retrieve_graph import GraphTreeRetriever as Retriever
-import security_profile as profile_store
+try:
+    from agent_loop import process_question, load_chunks, call_llm, extract_json, MODEL_NAME
+    from retrieve_graph import GraphTreeRetriever as Retriever
+    import security_profile as profile_store
+except ImportError:
+    from security_agent.agent_loop import process_question, load_chunks, call_llm, extract_json, MODEL_NAME
+    from security_agent.retrieve_graph import GraphTreeRetriever as Retriever
+    import security_agent.security_profile as profile_store
 
 MAX_FOLLOWUPS = 3
 

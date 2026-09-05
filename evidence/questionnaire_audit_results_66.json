@@ -1,0 +1,1286 @@
+{
+  "benchmark_name": "Regodit 66-Question Full Vendor Security Questionnaire",
+  "total_questions": 66,
+  "distribution": {
+    "answered": 38,
+    "ask_user": 17,
+    "conflict": 11
+  },
+  "golden_rule_enforced": true,
+  "never_fabricate_pass": true,
+  "results": [
+    {
+      "id": "1.0",
+      "row": 5,
+      "question": "Does your organization have a formal Information Security Program established?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Section 1 Scope and Purpose: Regodit has established a formal Information Security Program governing all workforce members, cloud environments, data repositories, and engineering operations.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "Regodit_information_security_policy_v1.0.docx",
+          "chunk_id": "policy::infosec_program_scope",
+          "quote": "Section 1 Scope and Purpose: Regodit has established a formal Information Security Program governing all workforce members, cloud environments, data r"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "2.0",
+      "row": 6,
+      "question": "Does your organization have a published set of Information Security policies, standards and procedures?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:data:aws_storage",
+          "quote": "Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "3.0",
+      "row": 7,
+      "question": "Does your organization have a public information security policy?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "4.0",
+      "row": 8,
+      "question": "Does your organization document role descriptions including relevant cybersecurity & data protection responsibilities?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "5.0",
+      "row": 9,
+      "question": "Is there a procedure in place for overseeing cybersecurity and data protection controls, that includes how issues are escalated to leadership?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "6.0",
+      "row": 11,
+      "question": "Will you be using any contractors or sub-contractors to complete the engagement with Client XYZ?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "7.0",
+      "row": 12,
+      "question": "Do you have a third-party risk management program/policy in place?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "8.0",
+      "row": 13,
+      "question": "Please attach your Third-Party Risk Management Policy.",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "9.0",
+      "row": 14,
+      "question": "Does your third-party risk management program include supply chain protections?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "10.0",
+      "row": 15,
+      "question": "Do your vendor and subcontractor agreements include clauses requiring adherence to cybersecurity and data privacy standards, and do these requirements flow down to all applicable subcontractors and suppliers?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:data:aws_storage",
+          "quote": "Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "11.0",
+      "row": 17,
+      "question": "Do you provide security awareness training at onboarding and at least annually thereafter for all personnel including contractors?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: The company commissions third-party vulnerability assessments and penetration testing at least annually and following significant application releases.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "Regodit_information_security_policy_v1.0.docx",
+          "chunk_id": "policy::annual_pentest",
+          "quote": "The company commissions third-party vulnerability assessments and penetration testing at least annually and following significant application releases"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "12.0",
+      "row": 18,
+      "question": "How frequently are employees trained on policies in your organization?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "13.0",
+      "row": 19,
+      "question": "Does your organization provide role based security awareness training at least annually?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: The company commissions third-party vulnerability assessments and penetration testing at least annually and following significant application releases.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "Regodit_information_security_policy_v1.0.docx",
+          "chunk_id": "policy::annual_pentest",
+          "quote": "The company commissions third-party vulnerability assessments and penetration testing at least annually and following significant application releases"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "14.0",
+      "row": 21,
+      "question": "Does your organization have privacy controls and or Data Privacy program in place?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "15.0",
+      "row": 22,
+      "question": "Will your personnel or your product require access to sensitive data (i.e PII, PI, PHI) to complete the engagement with Regodit?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "16.0",
+      "row": 23,
+      "question": "Please provide a copy of your data retention schedule and secure disposal procedures",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "17.0",
+      "row": 24,
+      "question": "Do you have a privacy policy in place? If so, please provide the attachment or URL.",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "18.0",
+      "row": 25,
+      "question": "Does your organization ensure privacy requirements are extended to contractors and service providers through contractual agreements, and that roles and responsibilities concerning data privacy are clearly understood and documented?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "19.0",
+      "row": 27,
+      "question": "Do you, or any third party you use to deliver services to Client XYZ, store sensitive information outside the United States? If so, where?",
+      "final_status": "conflict",
+      "confidence": 0.4,
+      "guardrail_note": "Conflicting evidence detected - human resolution required.",
+      "answer": null,
+      "conflict_explanation": "CONFLICT CONFLICT-001 (On-Premises Infrastructure & Backups): Information Security Policy explicitly claims zero on-premises servers, but Asset Inventory lists an active on-prem backup server and firewall. Guidance: DO NOT answer 'Yes, we are 100% cloud-only' or 'No, we have on-prem servers' without investigating. Identify the conflict: Policies specify cloud-native multi-AZ AWS architecture, yet internal asset inventory records an on-premise Dell PowerEdge backup server in an HQ server room. Ask the user/stakeholder to clarify whether the on-prem server is a legacy asset, a testing sandbox, or an active operational backup.",
+      "citations_count": 3,
+      "citations": [
+        {
+          "source": "master_corpus_index.json",
+          "chunk_id": "CONFLICT-001::synthesis",
+          "quote": "CONFLICT CONFLICT-001 (On-Premises Infrastructure & Backups): Information Security Policy explicitly"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:724e65485eadf0ee",
+          "quote": "Information Security Policy v1.0 (Sec 8, Sec 12): 'The company operates no on-premises servers or da"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:e3c26f8fcfb55351",
+          "quote": "Asset Inventory Regodit (Rows 10, 13): 'SN-100239 | Server | Dell PowerEdge R740 (on-prem backup) | "
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "20.0",
+      "row": 28,
+      "question": "Do you require data-at-rest encryption for sensitive data?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:data:aws_storage",
+          "quote": "Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "21.0",
+      "row": 29,
+      "question": "Do you require data-in-transit encryption for sensitive data? If so, please describe the encryption protocols used.",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:data:aws_storage",
+          "quote": "Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "22.0",
+      "row": 30,
+      "question": "Will Regodit data be stored on site, in a data center, or by a third party?",
+      "final_status": "conflict",
+      "confidence": 0.4,
+      "guardrail_note": "Conflicting evidence detected - human resolution required.",
+      "answer": null,
+      "conflict_explanation": "CONFLICT CONFLICT-001 (On-Premises Infrastructure & Backups): Information Security Policy explicitly claims zero on-premises servers, but Asset Inventory lists an active on-prem backup server and firewall. Guidance: DO NOT answer 'Yes, we are 100% cloud-only' or 'No, we have on-prem servers' without investigating. Identify the conflict: Policies specify cloud-native multi-AZ AWS architecture, yet internal asset inventory records an on-premise Dell PowerEdge backup server in an HQ server room. Ask the user/stakeholder to clarify whether the on-prem server is a legacy asset, a testing sandbox, or an active operational backup.",
+      "citations_count": 3,
+      "citations": [
+        {
+          "source": "master_corpus_index.json",
+          "chunk_id": "CONFLICT-001::synthesis",
+          "quote": "CONFLICT CONFLICT-001 (On-Premises Infrastructure & Backups): Information Security Policy explicitly"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:724e65485eadf0ee",
+          "quote": "Information Security Policy v1.0 (Sec 8, Sec 12): 'The company operates no on-premises servers or da"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:e3c26f8fcfb55351",
+          "quote": "Asset Inventory Regodit (Rows 10, 13): 'SN-100239 | Server | Dell PowerEdge R740 (on-prem backup) | "
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "23.0",
+      "row": 31,
+      "question": "Do you have data retention policies and procedures for the secure disposal of information?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:data:aws_storage",
+          "quote": "Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "24.0",
+      "row": 32,
+      "question": "If providing a product or SaaS platform that will access, store, or process Client XYZ data, are you able to provide applicable data flow diagrams showing how Regodit's data will flow through the tool upon request?",
+      "final_status": "conflict",
+      "confidence": 0.4,
+      "guardrail_note": "Conflicting evidence detected - human resolution required.",
+      "answer": null,
+      "conflict_explanation": "CONFLICT CONFLICT-002 (Centralized SIEM & Observability): Network architecture diagrams show an active SIEM for centralized logging, but the formal Information Security Policy states no dedicated SIEM exists. Guidance: Answer that logging is centralized via cloud-native AWS tools (CloudWatch, S3 object storage with ~1-year retention), while dedicated SIEM analytics is a planned improvement. Point out that the architecture diagram is an illustrative reference template.",
+      "citations_count": 3,
+      "citations": [
+        {
+          "source": "master_corpus_index.json",
+          "chunk_id": "CONFLICT-002::synthesis",
+          "quote": "CONFLICT CONFLICT-002 (Centralized SIEM & Observability): Network architecture diagrams show an acti"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:f84401711041e7cb",
+          "quote": "Network Architecture Diagrams (Figure 2) & admin-access-logging-diagram.png: Shows 'Centralized logg"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:3d78e2dbef6a568d",
+          "quote": "Information Security Policy v1.0 (Sec 11): 'The company does not currently operate a dedicated SIEM;"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "25.0",
+      "row": 34,
+      "question": "Is there a policy in place for physical security requirements for your business?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "26.0",
+      "row": 35,
+      "question": "Do you require physical access to any Client XYZ locations to complete your engagement?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "27.0",
+      "row": 36,
+      "question": "Are you willing to accept and acknowledge the expectations outlined in Client XYZ's Visitor Management document?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "28.0",
+      "row": 37,
+      "question": "Does your organization have procedures in place to track assets that are brought onto Client XYZ sites?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "29.0",
+      "row": 38,
+      "question": "Can you provide your organization's data protection policy, including evidence of physical safeguards for devices used onsite if requested?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:data:aws_storage",
+          "quote": "Customer data is stored in AWS-managed RDS, Redshift, S3, MSK, and related data-tier services."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "30.0",
+      "row": 40,
+      "question": "Will Client XYZ be using a web application provided by you?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Development controls require GitHub pull-request peer review and production deployment approvals.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:sdlc:live_controls",
+          "quote": "Development controls require GitHub pull-request peer review and production deployment approvals."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "31.0",
+      "row": 41,
+      "question": "What is the name of your web application?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Development controls require GitHub pull-request peer review and production deployment approvals.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:sdlc:live_controls",
+          "quote": "Development controls require GitHub pull-request peer review and production deployment approvals."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "32.0",
+      "row": 42,
+      "question": "What is the function/purpose of your web application?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Infrastructure footprint claims no on premises servers company operates no on-premises servers or data centers.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:infra:cloud_only_policy",
+          "quote": "Infrastructure footprint claims no on premises servers company operates no on-premises servers or data centers."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "33.0",
+      "row": 43,
+      "question": "How do you report application security vulnerabilities?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "34.0",
+      "row": 44,
+      "question": "Does your web application have an SSL/TLS certificate?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Sensitive data is encrypted in transit with TLS 1.3, with TLS 1.2 allowed only where a required system lacks TLS 1.3 support.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:encryption:in_transit",
+          "quote": "Sensitive data is encrypted in transit with TLS 1.3, with TLS 1.2 allowed only where a required system lacks TLS 1.3 support."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "35.0",
+      "row": 45,
+      "question": "Does your application offer single sign-on (SSO) or are there plans to implement/offer SSO in the near future? If plans to implement in near future, include an implementation date in your justification.",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "36.0",
+      "row": 47,
+      "question": "Do you have policies, procedures or standards in place for secure development practices?",
+      "final_status": "conflict",
+      "confidence": 0.4,
+      "guardrail_note": "Conflicting evidence detected - human resolution required.",
+      "answer": null,
+      "conflict_explanation": "CONFLICT CONFLICT-006 (Secure Development Lifecycle (SDLC) Completeness): The standalone SDLC document in infrastructure is an unfilled template, while actual SDLC rules are codified in the Information Security Policy. Guidance: Confirm that development controls (peer PR review, branch protection, founder approvals) are active per Information Security Policy, but note that the standalone SDLC document is currently in draft template status.",
+      "citations_count": 3,
+      "citations": [
+        {
+          "source": "master_corpus_index.json",
+          "chunk_id": "CONFLICT-006::synthesis",
+          "quote": "CONFLICT CONFLICT-006 (Secure Development Lifecycle (SDLC) Completeness): The standalone SDLC docume"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:52e9e8f01775bdf5",
+          "quote": "Secure Development Lifecycle Document 01.docx: Contains unfilled template placeholders like '<Compan"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:ee7399c818aaa386",
+          "quote": "Information Security Policy v1.0 (Sec 13): Enforces pull-request peer reviews in GitHub and mandator"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "37.0",
+      "row": 48,
+      "question": "Do you utilize Secure Coding Principles - (Detailed logging, encrypted credentials, etc.)?",
+      "final_status": "conflict",
+      "confidence": 0.4,
+      "guardrail_note": "Conflicting evidence detected - human resolution required.",
+      "answer": null,
+      "conflict_explanation": "CONFLICT CONFLICT-006 (Secure Development Lifecycle (SDLC) Completeness): The standalone SDLC document in infrastructure is an unfilled template, while actual SDLC rules are codified in the Information Security Policy. Guidance: Confirm that development controls (peer PR review, branch protection, founder approvals) are active per Information Security Policy, but note that the standalone SDLC document is currently in draft template status.",
+      "citations_count": 3,
+      "citations": [
+        {
+          "source": "master_corpus_index.json",
+          "chunk_id": "CONFLICT-006::synthesis",
+          "quote": "CONFLICT CONFLICT-006 (Secure Development Lifecycle (SDLC) Completeness): The standalone SDLC docume"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:52e9e8f01775bdf5",
+          "quote": "Secure Development Lifecycle Document 01.docx: Contains unfilled template placeholders like '<Compan"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:ee7399c818aaa386",
+          "quote": "Information Security Policy v1.0 (Sec 13): Enforces pull-request peer reviews in GitHub and mandator"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "38.0",
+      "row": 50,
+      "question": "Are internal vulnerability scans performed?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Vulnerability testing is commissioned at least annually and after major product or infrastructure changes.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:vuln:annual_testing",
+          "quote": "Vulnerability testing is commissioned at least annually and after major product or infrastructure changes."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "39.0",
+      "row": 51,
+      "question": "On what cadence are vulnerability scans performed?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Vulnerability testing is commissioned at least annually and after major product or infrastructure changes.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:vuln:annual_testing",
+          "quote": "Vulnerability testing is commissioned at least annually and after major product or infrastructure changes."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "40.0",
+      "row": 52,
+      "question": "What are the documented remediation timelines for critical and high patches?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Vulnerability testing is commissioned at least annually and after major product or infrastructure changes.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:vuln:annual_testing",
+          "quote": "Vulnerability testing is commissioned at least annually and after major product or infrastructure changes."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "41.0",
+      "row": 54,
+      "question": "What is the process for disaster recovery and backups?",
+      "final_status": "conflict",
+      "confidence": 0.4,
+      "guardrail_note": "Conflicting evidence detected - human resolution required.",
+      "answer": null,
+      "conflict_explanation": "CONFLICT CONFLICT-001 (On-Premises Infrastructure & Backups): Information Security Policy explicitly claims zero on-premises servers, but Asset Inventory lists an active on-prem backup server and firewall. Guidance: DO NOT answer 'Yes, we are 100% cloud-only' or 'No, we have on-prem servers' without investigating. Identify the conflict: Policies specify cloud-native multi-AZ AWS architecture, yet internal asset inventory records an on-premise Dell PowerEdge backup server in an HQ server room. Ask the user/stakeholder to clarify whether the on-prem server is a legacy asset, a testing sandbox, or an active operational backup.",
+      "citations_count": 3,
+      "citations": [
+        {
+          "source": "master_corpus_index.json",
+          "chunk_id": "CONFLICT-001::synthesis",
+          "quote": "CONFLICT CONFLICT-001 (On-Premises Infrastructure & Backups): Information Security Policy explicitly"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:724e65485eadf0ee",
+          "quote": "Information Security Policy v1.0 (Sec 8, Sec 12): 'The company operates no on-premises servers or da"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:e3c26f8fcfb55351",
+          "quote": "Asset Inventory Regodit (Rows 10, 13): 'SN-100239 | Server | Dell PowerEdge R740 (on-prem backup) | "
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "42.0",
+      "row": 55,
+      "question": "Please provide a copy of your BC/DR policy for review.",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:mfa:core_systems",
+          "quote": "MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "43.0",
+      "row": 57,
+      "question": "Do you keep a record of security events?",
+      "final_status": "conflict",
+      "confidence": 0.4,
+      "guardrail_note": "Conflicting evidence detected - human resolution required.",
+      "answer": null,
+      "conflict_explanation": "CONFLICT CONFLICT-002 (Centralized SIEM & Observability): Network architecture diagrams show an active SIEM for centralized logging, but the formal Information Security Policy states no dedicated SIEM exists. Guidance: Answer that logging is centralized via cloud-native AWS tools (CloudWatch, S3 object storage with ~1-year retention), while dedicated SIEM analytics is a planned improvement. Point out that the architecture diagram is an illustrative reference template.",
+      "citations_count": 3,
+      "citations": [
+        {
+          "source": "master_corpus_index.json",
+          "chunk_id": "CONFLICT-002::synthesis",
+          "quote": "CONFLICT CONFLICT-002 (Centralized SIEM & Observability): Network architecture diagrams show an acti"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:f84401711041e7cb",
+          "quote": "Network Architecture Diagrams (Figure 2) & admin-access-logging-diagram.png: Shows 'Centralized logg"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:3d78e2dbef6a568d",
+          "quote": "Information Security Policy v1.0 (Sec 11): 'The company does not currently operate a dedicated SIEM;"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "44.0",
+      "row": 58,
+      "question": "Do you monitor the security of your wireless networks?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "45.0",
+      "row": 59,
+      "question": "Do you have an incident response plan in place? If yes, describe briefly.",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Logging does not currently use dedicated SIEM; centralized log analytics is planned.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:logging:no_dedicated_siem",
+          "quote": "Logging does not currently use dedicated SIEM; centralized log analytics is planned."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "46.0",
+      "row": 60,
+      "question": "How often is your Incident Response Plan Tested?(Drop Down)",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "47.0",
+      "row": 61,
+      "question": "Do you have a policy requiring prompt notice to third parties regarding information security events affecting your organization?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Personnel undergo background checks through a third-party verification provider.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:hr:background_checks",
+          "quote": "Personnel undergo background checks through a third-party verification provider."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "48.0",
+      "row": 62,
+      "question": "Regardless of materiality, have you had a security event in the last 5 years?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "49.0",
+      "row": 63,
+      "question": "Do you outsource security functions to third-party providers?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "50.0",
+      "row": 65,
+      "question": "Do you use anti virus software to protect your devices? If yes, describe.",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "51.0",
+      "row": 66,
+      "question": "Will your organization be accessing Client XYZ's network?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "52.0",
+      "row": 67,
+      "question": "Will you be using an Regodit asset to access Regodit's network?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "53.0",
+      "row": 68,
+      "question": "Please list out all authorized personnel, including first and last names and e-mail addresses from your organization that will have access to Client XYZ's assets or network.",
+      "final_status": "conflict",
+      "confidence": 0.4,
+      "guardrail_note": "Conflicting evidence detected - human resolution required.",
+      "answer": null,
+      "conflict_explanation": "CONFLICT CONFLICT-004 (Employee & Contractor Offboarding Execution): Offboarding policy requires immediate access revocation, but access review records show contractor retained AWS Admin credentials after decommissioning. Guidance: Acknowledge the formal offboarding procedure exists (hardware wipe, checklist execution), but highlight that operational access review discovered a 5-day lag: contractor M. Delgado retained AWS cloud console access after hardware wipe, and the access review flagged 'Action needed: Revoke access' on 09/04/2026. Because an action request does not prove completion, the analyst must ask the user whether AWS console access was actually revoked.",
+      "citations_count": 3,
+      "citations": [
+        {
+          "source": "master_corpus_index.json",
+          "chunk_id": "CONFLICT-004::synthesis",
+          "quote": "CONFLICT CONFLICT-004 (Employee & Contractor Offboarding Execution): Offboarding policy requires imm"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:7965b699d111e8ea",
+          "quote": "HR Policy v1.0 & Asset Inventory: Contractor M. Delgado retired on 08/30/2026; laptop SN-100240 wipe"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:f277389db37eeb27",
+          "quote": "Access Review Records (09/04/2026): M. Delgado still listed with active AWS Production Console Admin"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "54.0",
+      "row": 69,
+      "question": "Please submit a network architecture diagram and details of your endpoint protection measures, including how your organization complies with firewall and DNS security standards when accessing XYZ's networks.",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:mfa:core_systems",
+          "quote": "MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "55.0",
+      "row": 71,
+      "question": "Do you keep an inventory of information technology (IT) assets and software?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:mfa:core_systems",
+          "quote": "MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "56.0",
+      "row": 72,
+      "question": "Does your organization have identity and access controls in place?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:mfa:core_systems",
+          "quote": "MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "57.0",
+      "row": 73,
+      "question": "Does your organization leverage role-based access control?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:mfa:core_systems",
+          "quote": "MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "58.0",
+      "row": 74,
+      "question": "Do you limit and periodically review user access privileges and controls?",
+      "final_status": "conflict",
+      "confidence": 0.4,
+      "guardrail_note": "Conflicting evidence detected - human resolution required.",
+      "answer": null,
+      "conflict_explanation": "CONFLICT CONFLICT-004 (Employee & Contractor Offboarding Execution): Offboarding policy requires immediate access revocation, but access review records show contractor retained AWS Admin credentials after decommissioning. Guidance: Acknowledge the formal offboarding procedure exists (hardware wipe, checklist execution), but highlight that operational access review discovered a 5-day lag: contractor M. Delgado retained AWS cloud console access after hardware wipe, and the access review flagged 'Action needed: Revoke access' on 09/04/2026. Because an action request does not prove completion, the analyst must ask the user whether AWS console access was actually revoked.",
+      "citations_count": 3,
+      "citations": [
+        {
+          "source": "master_corpus_index.json",
+          "chunk_id": "CONFLICT-004::synthesis",
+          "quote": "CONFLICT CONFLICT-004 (Employee & Contractor Offboarding Execution): Offboarding policy requires imm"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:7965b699d111e8ea",
+          "quote": "HR Policy v1.0 & Asset Inventory: Contractor M. Delgado retired on 08/30/2026; laptop SN-100240 wipe"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:f277389db37eeb27",
+          "quote": "Access Review Records (09/04/2026): M. Delgado still listed with active AWS Production Console Admin"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "59.0",
+      "row": 75,
+      "question": "What is the cadence of your access reviews?(Drop Down)",
+      "final_status": "conflict",
+      "confidence": 0.4,
+      "guardrail_note": "Conflicting evidence detected - human resolution required.",
+      "answer": null,
+      "conflict_explanation": "CONFLICT CONFLICT-004 (Employee & Contractor Offboarding Execution): Offboarding policy requires immediate access revocation, but access review records show contractor retained AWS Admin credentials after decommissioning. Guidance: Acknowledge the formal offboarding procedure exists (hardware wipe, checklist execution), but highlight that operational access review discovered a 5-day lag: contractor M. Delgado retained AWS cloud console access after hardware wipe, and the access review flagged 'Action needed: Revoke access' on 09/04/2026. Because an action request does not prove completion, the analyst must ask the user whether AWS console access was actually revoked.",
+      "citations_count": 3,
+      "citations": [
+        {
+          "source": "master_corpus_index.json",
+          "chunk_id": "CONFLICT-004::synthesis",
+          "quote": "CONFLICT CONFLICT-004 (Employee & Contractor Offboarding Execution): Offboarding policy requires imm"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:7965b699d111e8ea",
+          "quote": "HR Policy v1.0 & Asset Inventory: Contractor M. Delgado retired on 08/30/2026; laptop SN-100240 wipe"
+        },
+        {
+          "source": "knowledge_graph.json",
+          "chunk_id": "claim:f277389db37eeb27",
+          "quote": "Access Review Records (09/04/2026): M. Delgado still listed with active AWS Production Console Admin"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "60.0",
+      "row": 76,
+      "question": "Does your organization require replay-resistant authentication mechanisms such as OTP or MFA?",
+      "final_status": "conflict",
+      "confidence": 0.4,
+      "guardrail_note": "Conflicting evidence detected - human resolution required.",
+      "answer": null,
+      "conflict_explanation": "Company policy states MFA is enforced/required across all core systems, but a penetration test report recommends implementing MFA on a customer-facing application - suggesting it may not actually be enforced there.",
+      "citations_count": 3,
+      "citations": [
+        {
+          "source": "Regodit_password_and_secrets_policy_v1.0.docx",
+          "chunk_id": "policy::mfa_enforced",
+          "quote": "Multi-factor authentication (MFA) is enforced across all core systems, cloud infrastructure consoles"
+        },
+        {
+          "source": "VAPT Report 01.docx",
+          "chunk_id": "vapt::mfa_recommendation",
+          "quote": "Recommend implementing MFA on the customer-facing web application to enhance authentication security"
+        },
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:mfa:core_systems",
+          "quote": "MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "61.0",
+      "row": 77,
+      "question": "Are the external authenticators in use, NIST compliant?",
+      "final_status": "ask_user",
+      "confidence": 0.1,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": null,
+      "citations_count": 0,
+      "citations": [],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "62.0",
+      "row": 78,
+      "question": "Does your organization enforce the principle of least privilege?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:mfa:core_systems",
+          "quote": "MFA is enforced for core systems, cloud infrastructure consoles, identity/email provider, and source-code platform."
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "63.0",
+      "row": 80,
+      "question": "Do you conduct information security risk assessments at least annually?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: The company commissions third-party vulnerability assessments and penetration testing at least annually and following significant application releases.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "Regodit_information_security_policy_v1.0.docx",
+          "chunk_id": "policy::annual_pentest",
+          "quote": "The company commissions third-party vulnerability assessments and penetration testing at least annually and following significant application releases"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "64.0",
+      "row": 81,
+      "question": "How do you prioritize critical assets for your organization?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: Asset Inventory Regodit (Rows 10, 13): 'SN-100239 | Server | Dell PowerEdge R740 (on-prem backup) | In Use | Located in HQ server room' and 'SN-100242 | Cisco Meraki MX67 Firewall | In Use | Primary o",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "security_graph.json",
+          "chunk_id": "claim:e3c26f8fcfb55351",
+          "quote": "Asset Inventory Regodit (Rows 10, 13): 'SN-100239 | Server | Dell PowerEdge R740 (on-prem backup) | In Use | Located in HQ server room' and 'SN-100242"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "65.0",
+      "row": 82,
+      "question": "Does your organization conduct penetration testing at least annually?",
+      "final_status": "answered",
+      "confidence": 0.9,
+      "guardrail_note": "Passed all checks.",
+      "answer": "Based on company documentation: The company commissions third-party vulnerability assessments and penetration testing at least annually and following significant application releases.",
+      "conflict_explanation": null,
+      "citations_count": 1,
+      "citations": [
+        {
+          "source": "Regodit_information_security_policy_v1.0.docx",
+          "chunk_id": "policy::annual_pentest",
+          "quote": "The company commissions third-party vulnerability assessments and penetration testing at least annually and following significant application releases"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    },
+    {
+      "id": "66.0",
+      "row": 83,
+      "question": "Have the findings from the most recent penetration test been remediated?",
+      "final_status": "ask_user",
+      "confidence": 0.3,
+      "guardrail_note": "No sufficient evidence found in company documents.",
+      "answer": null,
+      "conflict_explanation": "Point-in-time VAPT report lists 20 open findings, but active SLA windows (7-30 days) require verifying current remediation completion with engineering.",
+      "citations_count": 2,
+      "citations": [
+        {
+          "source": "master_corpus_index.json",
+          "chunk_id": "CONFLICT-007::synthesis",
+          "quote": "CONFLICT CONFLICT-007 (Vulnerability Assessment Findings & Remediation Status): VAPT report identified 20 vulnerabilitie"
+        },
+        {
+          "source": "VAPT Report 01.docx",
+          "chunk_id": "vapt::findings_status_summary",
+          "quote": "VAPT Report 01 Findings Table: 20 distinct vulnerabilities identified. All 20 findings show remediation status 'Open'. H"
+        }
+      ],
+      "prism_trajectory_id": "traced_to_prism"
+    }
+  ]
+}
