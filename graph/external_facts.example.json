@@ -1,0 +1,18 @@
+{
+  "facts": [
+    {
+      "id": "nist-sp-800-63b-mfa",
+      "query": "NIST SP 800-63B multi-factor authentication authenticator assurance levels",
+      "external_use_case": "standards_validation",
+      "title": "Example Tavily result title",
+      "url": "https://example.com/external-source",
+      "retrieved_at": "2026-09-05T00:00:00Z",
+      "summary": "Short external context. This supplements internal evidence only.",
+      "supplements": "claim:mfa:core_systems",
+      "target_type": "Claim",
+      "result_rank": 1,
+      "score": 0.91,
+      "domain_filter": ["nist.gov", "pages.nist.gov"]
+    }
+  ]
+}
