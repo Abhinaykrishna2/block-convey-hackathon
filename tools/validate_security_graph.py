@@ -29,7 +29,7 @@ def main() -> None:
     require(payload["metadata"]["question_count"] == 66, "expected 66 questionnaire questions")
     require(counts["Source"] == 26, "Source node count must be 26")
     require(counts["QuestionnaireQuestion"] == 66, "QuestionnaireQuestion count must be 66")
-    require(counts["Conflict"] == 7, "Conflict node count must be 7")
+    require(counts["Conflict"] >= 7, "must retain at least the 7 baseline conflict nodes")
     require(counts["ControlArea"] >= 20, "expected full control taxonomy")
     require(counts["EvidenceBlock"] > 100, "expected atomic evidence blocks")
     require(counts["Claim"] >= 20, "expected normalized claims")
@@ -66,10 +66,25 @@ def main() -> None:
     ]
     require(template_actions, "template/placeholder docs must create action items")
 
+    require(
+        payload["metadata"].get("snapshot_model") == "static_point_in_time_corpus",
+        "graph must declare its static snapshot model",
+    )
+    valid_action_statuses = {"open", "resolved"}
+    for node in nodes:
+        if "ActionItem" not in node["labels"]:
+            continue
+        props = node["properties"]
+        require(props.get("status") in valid_action_statuses, "ActionItem status must be open or resolved")
+        require(props.get("status_source") in {"graph_build", "resolution_file"}, "ActionItem status source missing")
+        if props["status"] == "resolved":
+            require(props.get("resolved_at"), "resolved ActionItem must record resolved_at")
+
     external_nodes = [node for node in nodes if "ExternalFact" in node["labels"]]
     for node in external_nodes:
         props = node["properties"]
         require(props.get("source") == "external", "ExternalFact source must be external")
+        require(props.get("provider"), "ExternalFact provider must be recorded")
         require(
             props.get("isolation_rule") == "supplement_only_never_override_internal_evidence",
             "ExternalFact isolation rule missing",

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "action_items": {
+    "action:replace-with-stable-action-id": {
+      "status": "resolved",
+      "resolved_at": "2026-09-05T14:30:00Z",
+      "resolved_by": "security-team@example.com",
+      "resolution_note": "Access was revoked and the access review was updated.",
+      "resolution_evidence": [
+        "ticket:SEC-123",
+        "evidence:replace-with-evidence-id"
+      ]
+    }
+  }
+}
