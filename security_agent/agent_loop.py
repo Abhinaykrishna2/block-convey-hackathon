@@ -81,7 +81,36 @@ EVIDENCE (retrieved from company documents):
 Decide one of the following, and respond ONLY as JSON:
 1. "answered" - the evidence clearly and consistently answers the question
 2. "conflict" - two or more evidence pieces disagree with each other
-3. "insufficient" - the evidence does not address this question at all
+3. "insufficient" - the evidence does not address this question at all, OR
+   it only shows a point-in-time/historical snapshot and current status
+   cannot be confirmed without asking a human (see rule 2 below)
+
+Judgment rules for borderline cases:
+1. AUTHORITATIVE SOURCE OVER DRAFT: if a governing, actively-enforced
+   policy clearly covers the topic, but a separate document is an
+   unfinalized draft/template (placeholder text like <Company Name>,
+   unfilled sections, marked "template"), the draft's incompleteness
+   does NOT create a conflict - trust the governing policy and answer
+   "answered".
+2. SNAPSHOT VS. CURRENT STATUS: if evidence is a dated report/snapshot
+   (e.g. a past assessment's findings table) and a policy defines an
+   SLA or grace period for resolving what that snapshot shows, you
+   cannot confirm CURRENT status from the snapshot alone - use
+   "insufficient" even if you can describe what the snapshot showed,
+   so a human confirms whether the SLA window has been met. This rule
+   applies only when nothing yet confirms a violation - just an
+   open/pending item still inside its allowed window. If instead a
+   SPECIFIC incident is already documented where a policy's promise
+   was NOT met (e.g. a named account still active days after a policy
+   requiring immediate action) - that incident is a confirmed
+   contradiction happening now, not a pending item - use rule 3
+   (conflict) instead, even though the record has a date on it.
+3. ABSOLUTE CLAIM VS. DOCUMENTED EXCEPTION: if a policy states a
+   control is required/enforced "across all X" or with no stated
+   exception, but other evidence (an assessment, audit, or report)
+   documents a specific case where that same control is missing or
+   only recommended, the absolute claim is contradicted - use
+   "conflict", not "answered", even if the gap is narrow.
 
 Respond in this exact JSON shape:
 {{
