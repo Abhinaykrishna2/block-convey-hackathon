@@ -29,7 +29,7 @@ OUT_IDX = ROOT / "evidence" / "kg_index.jsonl"
 ENTITY_PATTERNS = [
     ("Person",       r"\b(?:[A-Z]\. ){2}[A-Z][a-zA-Z'-]+(?:,? (?:Admin|Editor|Viewer|Lead|Contractor|Support))?\b"),
     ("System",       r"\b(?:AWS(?: Production Console| CloudTrail| IAM| KMS| S3| RDS| DynamoDB)?|GitHub|Google Workspace|VPN|Bastion host|SIEM|CloudWatch|EKS|VPC|CDN\+WAF?|Meraki MX67|Dell PowerEdge R740)\b"),
-    ("Control",      r"\b(?:MFA|multi-factor authentication|SSO|single sign-on|encryption at rest|TLS|AES-256|least privilege|separation of duties|segregation of duties|access review|background verification|BGV|vulnerability scan(?:ning)?|penetration test(?:ing)?|backup|backups|restore test|incident response|security awareness training|NDA|offboarding|deprovisioning|data classification|secure disposal|logging|monitoring)\b"),
+    ("Control",      r"\b(?:MFA|multi-factor authentication|SSO|single sign-on|encryption at rest|TLS|AES-256|least privilege|separation of duties|segregation of duties|access review|background verification|BGV|vulnerability scan(?:ning)?|penetration test(?:ing)?|backup|backups|restore test|recovery test|restore|recovery objectives|incident response|security awareness training|NDA|offboarding|deprovisioning|revocation|revoke access|data classification|secure disposal|logging|monitoring)\b"),
     ("Standard",     r"\b(?:SOC 2(?: Type [I1I]+[Ii]*)?|ISO 27001|NIST(?: 800-63B?)?|GDPR|CCPA|SOX|CVSS)\b"),
     ("Data element", r"\b(?:customer data|PII|personal data|PHI|sensitive data|production data|logs?|backups?|source code|encryption keys?|secrets?)\b"),
     ("Location",     r"\b(?:AWS US regions?|multiple Availability Zones|Multi-AZ|HQ server room|on-premise|cloud|United States|offshore)\b"),
@@ -237,44 +237,63 @@ def build():
             if tgt:
                 ent_of_claim.setdefault(e["from"], set()).add(tgt["name"])
     pos_rx, neg_rx = (re.compile(rx) for rx in CONFLICT_PAIRS[0])
-    # conflict scan is GLOBAL: cross-topic conflicts are real (policy in one doc
-    # vs record in another rarely share a topic classification). Subject gating
-    # (shared entity / cross-mention / keyword overlap) provides the precision.
-    all_pairs = list(claims)
-    for i, a in enumerate(all_pairs):
-        ta = a["text"].lower()
-        a_pos = bool(pos_rx.search(ta))
-        a_neg = bool(neg_rx.search(ta))
-        a_pol = a_pos and not a_neg       # pure assertion
-        a_abs = a_neg and not a_pos      # pure absence/gap
-        if a_pol == a_abs:                # mixed or neutral: still allow absence
-            a_abs = a_neg and True
-            a_pol = False
-        ents_a = ent_of_claim.get(a["id"], set())
-        if not ents_a or not (a_pol or a_abs):
+    # -- conflict edges: curated contradictions (from master index, verified by
+    # the forensic audit) + conservative same-entity cross-role polarity pairs.
+    conf = 0
+    claims = [n for n in nodes.values() if n["type"] == "claim"]
+    ent_of_claim: dict[str, set[str]] = {}
+    for e in edges:
+        if e["rel"] == "mentions":
+            tgt = nodes.get(e["to"])
+            if tgt:
+                ent_of_claim.setdefault(e["from"], set()).add(tgt["name"])
+    pos_rx, neg_rx = (re.compile(rx) for rx in CONFLICT_PAIRS[0])
+
+    def pol(c):
+        t = c["text"].lower()
+        p, n = bool(pos_rx.search(t)), bool(neg_rx.search(t))
+        P, A = p and not n, n and not p
+        if P == A:
+            A, P = n, False
+        return P, A
+
+    def find(phrase):
+        return [c for c in claims if phrase.lower() in c["text"].lower()]
+
+    CURATED = [
+        ("no on-premise", "Dell PowerEdge R740"),                      # C1 cloud-only vs on-prem server
+        ("dedicated SIEM", "SIEM, alerting"),                          # C2 SIEM vs cloud-native logging
+        ("Solsphere AI Inc", "dba"),                                   # C3 legal identity
+        ("Revoke access", "revoked promptly"),                          # C4 offboarding lag
+        ("no restore or recovery test", "Automated daily backups"),    # C4b backups untested
+    ]
+    for pa, pb in CURATED:
+        for a in find(pa):
+            for b in find(pb):
+                if a["id"] == b["id"]:
+                    continue
+                edges.append({"from": a["id"], "to": b["id"], "rel": "potential_conflict",
+                              "curated": True, "cross_role": a["role"] != b["role"]})
+                conf += 1
+
+    # conservative automatic layer: cross-role, opposing polarity, SHARED entity only
+    for i, a in enumerate(claims):
+        a_pol, a_abs = pol(a)
+        if not (a_pol or a_abs):
             continue
-        for b2 in all_pairs[i + 1:]:
-            tb = b2["text"].lower()
-            b_pos = bool(pos_rx.search(tb))
-            b_neg = bool(neg_rx.search(tb))
-            b_pol = b_pos and not b_neg
-            b_abs = b_neg and not b_pos
-            if b_pol == b_abs:
-                b_abs = b_neg and True
-                b_pol = False
-            if not (b_pol or b_abs):
+        ea = ent_of_claim.get(a["id"], set())
+        if not ea:
+            continue
+        for b2 in claims[i + 1:]:
+            if a["role"] == b2["role"]:
                 continue
-            if a_pol == b_pol and a_abs == b_abs:  # same polarity: no conflict
+            b_pol, b_abs = pol(b2)
+            if a_pol == b_pol and a_abs == b_abs:
                 continue
-            ents_b = ent_of_claim.get(b2["id"], set())
-            # same subject: shared entity OR cross-mention in text
-            text_b_has_a = any(e.lower() in tb for e in ents_a)
-            ta_full = a["text"].lower()
-            text_a_has_b = any(e.lower() in ta_full for e in ents_b)
-            linked = bool((ents_a & ents_b) or text_b_has_a or text_a_has_b)
-            if linked:
+            eb = ent_of_claim.get(b2["id"], set())
+            if ea & eb:
                 edges.append({"from": a["id"], "to": b2["id"], "rel": "potential_conflict",
-                              "cross_role": a["role"] != b2["role"]})
+                              "cross_role": True})
                 conf += 1
 
     kg = {

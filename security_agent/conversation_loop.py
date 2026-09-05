@@ -22,7 +22,7 @@ mock on any failure so a flaky connection never breaks the demo.
 """
 import json
 from agent_loop import process_question, load_chunks, call_llm, extract_json, MODEL_NAME
-from retrieve_v2 import Retriever
+from retrieve_graph import GraphTreeRetriever as Retriever
 import security_profile as profile_store
 
 MAX_FOLLOWUPS = 3

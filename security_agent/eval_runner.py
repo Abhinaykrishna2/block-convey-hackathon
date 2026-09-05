@@ -8,7 +8,7 @@ it's just this file, made bigger over time as you verify more
 of the 66 questions by hand.
 """
 from agent_loop import process_question, load_chunks
-from retrieve_v2 import Retriever
+from retrieve_graph import GraphTreeRetriever as Retriever
 from eval_set import EVAL_CASES
 
 def run_evals():
