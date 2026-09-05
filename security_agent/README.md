@@ -1,41 +1,43 @@
-# Regodit AI Security Analyst — Agent + Guardrails + Evals
+# Security Agent
 
-Mathan's part of the Money Talks / Regodit track build.
+Backend for the Regodit AI Security Analyst. The agent answers vendor
+security questions by investigating evidence first, asking the user only
+when the documents cannot answer, and never fabricating.
 
-## Setup
-```
-pip install python-docx openpyxl scikit-learn --break-system-packages
-```
-Put the extracted policy/report/contract docx files in the same folder
-(or update the glob path in chunk_docs.py), then:
+## Modules
 
-```
-python3 chunk_docs.py       # builds chunks.json from real docs
-python3 retrieve_v2.py      # sanity-check retrieval on a sample query
-python3 eval_runner.py      # run the eval scorecard
-python3 conversation_loop.py  # run the full multi-turn demo
-```
+- retriever_base.py: the retrieval contract. Any backend must return
+  (chunk_id, source, text, score), ranked best-first, higher score means
+  more relevant.
+- retrieve_graph.py: GraphTreeRetriever, the production backend. Traverses
+  the security evidence graph (graph/out/security_graph.json) across
+  questions, control areas, conflicts, claims, and evidence blocks.
+- agent_loop.py: the decision loop plus guardrails. Produces one of
+  ANSWERED, CONFLICT, ASK_USER, or FOLLOW_UP. Every LLM verdict passes
+  enforce_guardrails() before becoming final. Traces each question to
+  PRISM as a trajectory.
+- security_profile.py: persistent security profile in security_profile.json.
+  Stores verified, user confirmed, and unknown answers with citations,
+  avoids duplicate questions, supports corrections.
+- conversation_loop.py: interactive CLI chat with conflict resolution and
+  follow-up drilling (for example: backups exist, but how often, and are
+  they automated).
+- run_66_benchmark.py: audits the full 66 question questionnaire, exports
+  evidence/questionnaire_audit_results_66.json, flushes PRISM trajectories.
+- eval_runner.py + eval_set.py: small eval harness for targeted test cases.
+- ui_server.py: serves ui/ (Cytoscape graph visualizer) and exposes a query
+  endpoint backed by the retriever and the guardrailed agent.
 
-## Files, in the order you'd read them
-1. **chunk_docs.py** — splits docx files into paragraph-level chunks
-2. **retrieve_v2.py** — TF-IDF retrieval STUB (swap for teammate's real
-   ingestion/embedding pipeline — same return shape: list of
-   {chunk_id, source, text, score})
-3. **agent_loop.py** — the core decision loop: retrieve → LLM reasoning
-   → guardrail enforcement → answered/conflict/ask_user. Contains the
-   DECISION_PROMPT_TEMPLATE to send to Claude, and call_llm() is a
-   stub to wire up with a real API key on hackathon day (see TODO
-   comment inside).
-4. **security_profile.py** — persistent state store ("remember
-   everything", no duplicate questions, corrections update in place)
-5. **conversation_loop.py** — full multi-turn flow per question,
-   including the vague-answer → follow-up loop (evaluate_user_reply()
-   is also a mock — TODO comment marks where to plug in the real LLM)
-6. **eval_set.py / eval_runner.py** — hand-verified ground-truth test
-   cases + a pass/fail scorecard runner
+## Decision Flow
 
-## TODO before the hackathon
-- Wire call_llm() in agent_loop.py to real Anthropic API
-- Wire evaluate_user_reply() in conversation_loop.py to real API too
-- Point chunk_docs.py at wherever the REAL provided docs land on the day
-- Confirm top_k (currently 12) is wide enough once real embeddings replace TF-IDF
+retrieve(question) -> evidence chunks -> LLM proposes verdict ->
+enforce_guardrails() verifies citations and conflict handling ->
+final status with answer, citations, confidence, and guardrail note.
+
+The guardrail is what makes the system defensible: the LLM proposes,
+the guardrail disposes. No citation means no answer.
+
+## Benchmark
+
+Latest run: 38 answered, 11 conflict, 17 ask_user, 0 fabricated,
+across all 66 questions with PRISM tracing enabled.

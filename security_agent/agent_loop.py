@@ -47,7 +47,7 @@ def get_prism_client():
             host = os.environ.get("PRISM_HOST", "https://api.prismtrace.com")
             if not api_key or not project_id:
                 return None
-            _prism_client = PRISMtrace(api_key=api_key, host=host, project_id=project_id, timeout=5)
+            _prism_client = PRISMtrace(api_key=api_key, host=host, project_id=project_id, timeout=30)
         except Exception:
             _prism_client = None
     return _prism_client

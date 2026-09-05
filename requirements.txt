@@ -1,0 +1,6 @@
+anthropic
+prismtrace-sdk
+python-docx
+openpyxl
+pypdf
+python-dotenv

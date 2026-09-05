@@ -117,4 +117,13 @@ def run_66_benchmark() -> Dict[str, Any]:
 
 
 if __name__ == '__main__':
-    run_66_benchmark()
+    audit = run_66_benchmark()
+    # flush PRISM async trajectory threads before exit so judges see all 66
+    try:
+        from agent_loop import get_prism_client
+        prism = get_prism_client()
+        if prism:
+            prism.flush(timeout=60)
+            print('PRISM trajectories flushed.')
+    except Exception as e:
+        print(f'PRISM flush skipped: {e}')
