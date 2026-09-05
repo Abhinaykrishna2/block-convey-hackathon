@@ -35,7 +35,7 @@ ORDER BY question_id;
 // VAPT remediation status
 MATCH (finding:AssessmentFinding)-[:VIOLATES_OR_WEAKENS]->(area:ControlArea)
 OPTIONAL MATCH (finding)-[:SUPPORTED_BY]->(evidence:EvidenceBlock)-[:FROM_SOURCE]->(source:Source)
-RETURN finding.id AS finding_id, finding.title AS title, finding.severity AS severity, finding.status AS status, area.name AS control_area, evidence.locator AS locator, source.path AS source
+RETURN finding.id AS finding_id, finding.title AS title, finding.severity AS severity, finding.remediation_status AS remediation_status, area.name AS control_area, evidence.locator AS locator, source.path AS source
 ORDER BY finding.severity DESC, finding.id;
 
 // Contract obligations mapped to controls

@@ -771,11 +771,16 @@ class SecurityGraphBuilder:
                 "id": node_id,
                 "provider": "tavily",
                 "source": "external",
+                "external_use_case": fact.get("external_use_case", ""),
                 "title": fact.get("title", ""),
                 "url": fact.get("url", ""),
                 "retrieved_at": fact.get("retrieved_at", ""),
                 "summary": fact.get("summary", ""),
                 "query": fact.get("query", ""),
+                "result_rank": fact.get("result_rank", ""),
+                "score": fact.get("score", ""),
+                "target_type": fact.get("target_type", ""),
+                "domain_filter": fact.get("domain_filter", []),
                 "isolation_rule": "supplement_only_never_override_internal_evidence",
             }
             self.add_node(node_id, ["ExternalFact"], props)
