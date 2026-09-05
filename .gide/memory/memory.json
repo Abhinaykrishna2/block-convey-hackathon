@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "profile": null,
+  "tasks": [
+    {
+      "prompt": "create the file\n\nFile 1 — .gide/skills/security-analyst.md\n# Project: AI Security Analyst\n\n## Goal\nA chatbot that completes an enterprise security questionnaire by investigating a\ncompany's own docume",
+      "did": "edited security-analyst.md",
+      "files": [
+        "security-analyst.md"
+      ],
+      "ts": 1788626377374
+    },
+    {
+      "prompt": "can you help update the UI applicatio to make it more user friendly",
+      "did": "read security-analyst.md, page.tsx, package.json, store.ts",
+      "files": [],
+      "ts": 1788629155758
+    }
+  ]
+}

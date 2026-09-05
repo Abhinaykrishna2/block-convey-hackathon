@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "lessons": [
+    {
+      "id": "l_mtolypic",
+      "pattern": "multiple_loops",
+      "lesson": "Task took 10 loops. For simple edits, use write_to_file (full rewrite) instead of complex anchored edits.",
+      "frequency": 2,
+      "lastSeen": 1788629155758
+    },
+    {
+      "id": "l_mtonm9bi",
+      "pattern": "duplicate_read",
+      "lesson": "Model read security-analyst.md multiple times. Ensure file content is in context before editing.",
+      "frequency": 4,
+      "lastSeen": 1788629155758
+    },
+    {
+      "id": "l_mtonm9bi",
+      "pattern": "tool_not_found",
+      "lesson": "Tool \"read_file\" not found. Use only: read_file, write_to_file, replace_file_content, list_dir, glob_files, grep_files, lookup, read_page.",
+      "frequency": 2,
+      "lastSeen": 1788629155758
+    }
+  ],
+  "skills": [],
+  "metrics": {
+    "totalTasks": 5,
+    "successfulTasks": 5,
+    "avgLoopsPerTask": 4.2,
+    "totalSkillsUsed": 0
+  }
+}

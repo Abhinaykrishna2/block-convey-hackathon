@@ -1,5 +1,48 @@
+# OS
 .DS_Store
-Hackathon/
-evidence/blocks.jsonl
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
+
+# Next.js
+.next/
+out/
+.vercel
+
+# Env / secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Logs & coverage
+*.log
+logs/
+coverage/
+.nyc_output/
+
+# Python leftovers
+.venv/
 __pycache__/
 *.pyc
+*.pyo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.env 
+
+# Project
+Hackathon/
+evidence/blocks.jsonl
+security_agent/security_profile.json
+security_agent/security_profile.json.tmp

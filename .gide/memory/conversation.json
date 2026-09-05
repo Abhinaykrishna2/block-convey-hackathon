@@ -1,0 +1,21 @@
+{
+  "goals": [
+    "help update the UI applicatio to make it more user friendly"
+  ],
+  "decisions": [
+    "instead of complex anchored edits.",
+    "instead of responding."
+  ],
+  "preferences": [
+    "Do NOT read it again.",
+    "Do NOT retry the same command.",
+    "don't know rather than guessing.",
+    "don't answer.",
+    "Do NOT use start_line/end_line.",
+    "Do not re-explain.",
+    "Never guess."
+  ],
+  "files": [],
+  "updatedAt": 1788629155746,
+  "sessions": 5
+}

@@ -112,30 +112,20 @@ def call_llm(prompt):
 
 
 def simulate_llm_reasoning(question, chunks):
-    """
-    Transparent MOCK reasoning - kept as the offline/no-key/API-failure
-    fallback so a flaky connection or a missing key at demo time doesn't
-    take the whole pipeline down. Not meant to be smart.
-    """
-    texts = " ".join(c["text"].lower() for c in chunks)
-
-    requires_lang = any(w in texts for w in ["required across", "is enforced", "is required"])
-    recommends_lang = any(w in texts for w in ["recommend", "enhance security by implementing", "encourage or require"])
-
-    if requires_lang and recommends_lang:
+    """Local decision from retrieved graph/doc chunks. No remote model."""
+    graph_hits = [c for c in chunks if str(c.get("chunk_id", "")).startswith("graph:")]
+    if graph_hits:
+        top = graph_hits[0]
+        cites = [
+            {"source": c["source"], "chunk_id": c["chunk_id"], "quote": c["text"][:180]}
+            for c in graph_hits[:3]
+        ]
         return {
             "status": "conflict",
             "answer": None,
-            "confidence": 0.4,
-            "citations": [
-                {"source": c["source"], "chunk_id": c["chunk_id"], "quote": c["text"][:100]}
-                for c in chunks[:3]
-            ],
-            "conflict_explanation": (
-                "Company policy states MFA is enforced/required across all core systems, "
-                "but a penetration test report recommends implementing MFA on a "
-                "customer-facing application - suggesting it may not actually be enforced there."
-            ),
+            "confidence": 0.62,
+            "citations": cites,
+            "conflict_explanation": top["text"][:700],
         }
 
     if not chunks or max(c["score"] for c in chunks) < 0.15:
@@ -148,35 +138,27 @@ def simulate_llm_reasoning(question, chunks):
         }
 
     top = chunks[0]
+    extras = [c for c in chunks[1:3] if c["score"] >= 0.12]
+    answer = top["text"].strip()
+    if len(answer) > 420:
+        answer = answer[:420].rsplit(" ", 1)[0] + "…"
     return {
         "status": "answered",
-        "answer": f"Based on company documentation: {top['text'][:200]}",
-        "confidence": min(0.9, top["score"] * 3),
-        "citations": [{"source": top["source"], "chunk_id": top["chunk_id"], "quote": top["text"][:150]}],
+        "answer": answer,
+        "confidence": min(0.9, float(top["score"]) * 3),
+        "citations": [
+            {"source": c["source"], "chunk_id": c["chunk_id"], "quote": c["text"][:180]}
+            for c in [top, *extras]
+        ],
         "conflict_explanation": None,
     }
 
 
 def get_llm_decision(question, chunks, evidence_block, prompt):
-    """
-    Try the real API first; fall back to the deterministic mock on any
-    failure (missing key, network error, bad JSON back) so the demo
-    keeps running. `used_live_llm` is stamped on the result so you can
-    tell judges honestly whether a given answer came from the real
-    model or the offline fallback.
-    """
-    try:
-        raw = call_llm(prompt)
-        parsed = extract_json(raw)
-        parsed.setdefault("citations", [])
-        parsed.setdefault("conflict_explanation", None)
-        parsed["used_live_llm"] = True
-        return parsed
-    except Exception as e:
-        fallback = simulate_llm_reasoning(question, chunks)
-        fallback["used_live_llm"] = False
-        fallback["llm_error"] = str(e)
-        return fallback
+    """Always use the local retrieve + heuristic path. No Anthropic call."""
+    decision = simulate_llm_reasoning(question, chunks)
+    decision["used_live_llm"] = False
+    return decision
 
 # ---- 3. Guardrail enforcement (THE key deliverable) ----
 
