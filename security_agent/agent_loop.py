@@ -147,19 +147,19 @@ def _extract_json(text):
     return json.loads(text)
 
 extract_json = _extract_json
-MODEL_NAME = os.environ.get("OPENROUTER_MODEL", "z-ai/glm-5.2:free")
+MODEL_NAME = os.environ.get("OPENROUTER_MODEL", "z-ai/glm-5.3")
 
 def call_openrouter(prompt, max_retries=2):
     """
-    Calls OpenRouter with GLM models (z-ai/glm-5.2:free, z-ai/glm-5.3-flash, z-ai/glm-5.3).
+    Calls OpenRouter with GLM models (z-ai/glm-5.3, z-ai/glm-5.3-flash, z-ai/glm-5.2:free).
     Strictly parses and returns JSON.
     """
     api_key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENROUTER_KEY")
     if not api_key:
         raise RuntimeError("OPENROUTER_API_KEY not configured in environment or .env.")
 
-    preferred_model = os.environ.get("OPENROUTER_MODEL", "z-ai/glm-5.2:free")
-    candidate_models = [preferred_model, "z-ai/glm-5.3-flash", "z-ai/glm-5.3", "openrouter/free"]
+    preferred_model = os.environ.get("OPENROUTER_MODEL", "z-ai/glm-5.3")
+    candidate_models = [preferred_model, "z-ai/glm-5.3-flash", "z-ai/glm-5.2:free", "openrouter/free"]
     models = []
     for m in candidate_models:
         if m and m not in models:

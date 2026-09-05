@@ -269,9 +269,9 @@ def call_openrouter_conversational(
         return None
 
     models = [
-        os.environ.get("OPENROUTER_MODEL", "z-ai/glm-5.2:free"),
+        os.environ.get("OPENROUTER_MODEL", "z-ai/glm-5.3"),
         "z-ai/glm-5.3-flash",
-        "z-ai/glm-5.3",
+        "z-ai/glm-5.2:free",
         "openrouter/free",
     ]
 
