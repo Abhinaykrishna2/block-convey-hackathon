@@ -405,9 +405,9 @@ export default function Analyst() {
                       {m.clarifyingQuestion && (
                         <div style={{ marginBottom: "12px" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}>
-                            <span style={{ fontSize: "13px" }}>❓</span>
+                            <span style={{ fontSize: "13px" }}>{m.status === "conflict" ? "⚠️" : "❓"}</span>
                             <b style={{ fontSize: "12px", color: "var(--acc2)", textTransform: "uppercase", letterSpacing: "0.07em" }}>
-                              Clarification Requested
+                              {m.status === "conflict" ? "Document Contradiction · Stakeholder Decision Required" : "Clarification Requested"}
                             </b>
                           </div>
                           <div style={{ fontSize: "14px", color: "var(--tx)", fontWeight: 500, lineHeight: 1.5 }}>
@@ -427,7 +427,7 @@ export default function Analyst() {
                           lineHeight: 1.55,
                         }}>
                           <div style={{ fontWeight: 700, color: "#9a5b32", marginBottom: "3px", display: "flex", alignItems: "center", gap: "6px" }}>
-                            <span>💡</span> Recommended Operational Standard:
+                            <span>💡</span> {m.status === "conflict" ? "Proposed Conflict Resolution:" : "Recommended Operational Standard:"}
                           </div>
                           <div style={{ color: "var(--tx2)" }}>
                             {m.recommendation}
@@ -457,12 +457,12 @@ export default function Analyst() {
                               setAnswering({
                                 questionId: m.questionId || (m.status === "conflict" ? "conflict_resolution" : "ask_user"),
                                 question: m.asked ?? m.text,
-                                followUp: m.clarifyingQuestion || "Recommended standard",
+                                followUp: m.clarifyingQuestion || (m.status === "conflict" ? "Conflict resolution" : "Recommended standard"),
                               });
                               void send(m.recommendationAction!);
                             }}
                           >
-                            ✓ Accept Recommendation
+                            {m.status === "conflict" ? "✓ Resolve Conflict" : "✓ Confirm Standard"}
                           </button>
                         )}
 
@@ -482,7 +482,7 @@ export default function Analyst() {
                             setAnswering({
                               questionId: m.questionId || (m.status === "conflict" ? "conflict_resolution" : "ask_user"),
                               question: m.asked ?? m.text,
-                              followUp: m.clarifyingQuestion || "Clarify",
+                              followUp: m.clarifyingQuestion || (m.status === "conflict" ? "Resolve conflict" : "Clarify"),
                             });
                             if (m.recommendationAction) {
                               setDraft(m.recommendationAction);
@@ -490,7 +490,7 @@ export default function Analyst() {
                             setTimeout(() => inputRef.current?.focus(), 60);
                           }}
                         >
-                          ✎ Type Custom Answer
+                          {m.status === "conflict" ? "✎ Provide Custom Resolution" : "✎ Type Custom Answer"}
                         </button>
                       </div>
                     </div>
@@ -591,11 +591,21 @@ export default function Analyst() {
           ref={inputRef}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder={answering ? "Type your answer or confirm the recommendation…" : "Ask a security question, policy inquiry, or compliance control…"}
+          placeholder={
+            answering
+              ? (answering.questionId?.toLowerCase().includes("conflict")
+                  ? "Type your conflict resolution decision…"
+                  : "Type your answer or confirm the operational standard…")
+              : "Ask a security question, policy inquiry, or compliance control…"
+          }
           disabled={busy}
         />
         <button className="primary" disabled={busy || !draft.trim()} type="submit">
-          {answering ? "Record & Save" : "Send"}
+          {answering
+            ? (answering.questionId?.toLowerCase().includes("conflict")
+                ? "Resolve Conflict"
+                : "Record & Save")
+            : "Send"}
         </button>
       </form>
 

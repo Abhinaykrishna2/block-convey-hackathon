@@ -270,6 +270,7 @@ def chat(body: ChatBody):
         ans_ctx = body.answering
         qid = ans_ctx.questionId or "USER-INPUT"
         q_text = ans_ctx.question or message
+        is_conflict_answer = "conflict" in qid.lower() or "conflict" in (ans_ctx.followUp or "").lower()
 
         stored = profile_store.upsert_record(
             question_id=qid,
@@ -281,7 +282,7 @@ def chat(body: ChatBody):
 
         trace_data = {
             "logs": [
-                f"human stakeholder resolution provided for control [{qid}]",
+                f"human stakeholder {'conflict resolution' if is_conflict_answer else 'clarification'} provided for control [{qid}]",
                 f"recorded: '{message[:60]}...'",
                 "Golden Rule: stakeholder truth persisted to security_profile.json",
                 "future queries will resolve from memory with confidence 1.00",
@@ -299,12 +300,13 @@ def chat(body: ChatBody):
             ],
         }
 
+        ack_type = "conflict resolution" if is_conflict_answer else "operational confirmation"
         return {
-            "reply": f"Recorded your confirmation for [{qid}]:\n\n\"{message}\"\n\nSaved to persistent memory store (security_profile.json). Future questions on this topic will use this verified practice.",
+            "reply": f"Recorded your {ack_type} for [{qid}]:\n\n\"{message}\"\n\nSaved to persistent memory store (security_profile.json). Future questions on this topic will use this verified practice.",
             "status": "confirmed",
             "confidence": 1.0,
             "confidenceBasis": {
-                "source_freshness": "Immediate: Live stakeholder confirmation submitted via console.",
+                "source_freshness": "Immediate: Live stakeholder resolution submitted via console.",
                 "directness": "Direct human resolution from authorized security stakeholder.",
                 "cross_verification": "Persisted to security_profile.json as active ground truth.",
                 "summary": "Full confidence (1.00): Confirmed directly by authorized stakeholder."
@@ -481,7 +483,12 @@ def chat(body: ChatBody):
         "reply": reply,
         "status": final_status,
         "confidence": confidence,
-        "confidenceBasis": result.get("confidence_basis"),
+        "confidenceBasis": {
+            "source_freshness": "Immediate: Live stakeholder resolution in persistent profile store.",
+            "directness": "Direct: Authorized human security resolution recorded to active profile.",
+            "cross_verification": "Persisted to security_profile.json as active operational ground truth.",
+            "summary": "Full confidence (1.00): Adjudicated and confirmed by authorized stakeholder."
+        } if final_status == "confirmed" else result.get("confidence_basis"),
         "externalCheck": result.get("external_check"),
         "citations": citations,
         "graphTrace": graph_trace,
