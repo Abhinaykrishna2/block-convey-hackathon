@@ -147,15 +147,77 @@ def _extract_json(text):
     return json.loads(text)
 
 extract_json = _extract_json
-MODEL_NAME = "claude-sonnet-5"
+MODEL_NAME = os.environ.get("OPENROUTER_MODEL", "z-ai/glm-5.2:free")
 
-def call_llm(prompt, max_retries=2):
+def call_openrouter(prompt, max_retries=2):
     """
-    Real Claude API call. Retries once on a JSON-parse failure by
-    asking the model to reformat - LLMs occasionally add a stray
-    sentence before/after the JSON, and that's cheaper to fix with
-    a follow-up than to fail the whole question.
+    Calls OpenRouter with GLM models (z-ai/glm-5.2:free, z-ai/glm-5.3-flash, z-ai/glm-5.3).
+    Strictly parses and returns JSON.
     """
+    api_key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENROUTER_KEY")
+    if not api_key:
+        raise RuntimeError("OPENROUTER_API_KEY not configured in environment or .env.")
+
+    preferred_model = os.environ.get("OPENROUTER_MODEL", "z-ai/glm-5.2:free")
+    candidate_models = [preferred_model, "z-ai/glm-5.3-flash", "z-ai/glm-5.3", "openrouter/free"]
+    models = []
+    for m in candidate_models:
+        if m and m not in models:
+            models.append(m)
+
+    headers = {
+        "Authorization": f"Bearer {api_key.strip()}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:3000",
+        "X-Title": "Sentinel AI Security Analyst",
+    }
+
+    last_error = None
+    for model in models:
+        payload = {
+            "model": model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are Sentinel, an autonomous enterprise AI Security Analyst. "
+                        "You operate strictly under the Golden Rule: NEVER fabricate an answer. "
+                        "Only use the provided retrieved company evidence. "
+                        "If documents conflict, mark status as 'conflict' and explain both sides. "
+                        "If information is missing, mark as 'insufficient'. "
+                        "Respond ONLY as a valid JSON object matching the requested schema."
+                    ),
+                },
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": 0.1,
+        }
+
+        for attempt in range(max_retries + 1):
+            try:
+                req = urllib.request.Request(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers=headers,
+                    method="POST",
+                )
+                with urllib.request.urlopen(req, timeout=35) as resp:
+                    resp_data = json.loads(resp.read().decode("utf-8"))
+                    choices = resp_data.get("choices", [])
+                    if choices:
+                        raw_text = choices[0].get("message", {}).get("content", "")
+                        parsed = _extract_json(raw_text)
+                        parsed["_model_used"] = model
+                        return parsed
+            except Exception as e:
+                last_error = e
+                continue
+
+    raise RuntimeError(f"OpenRouter call failed across models: {last_error}")
+
+
+def call_anthropic(prompt, max_retries=2):
+    """Fallback Claude API call if Anthropic credentials are configured."""
     client = get_client()
     messages = [{"role": "user", "content": prompt}]
 
@@ -165,15 +227,11 @@ def call_llm(prompt, max_retries=2):
             max_tokens=600,
             messages=messages,
         )
-        # Sonnet 5 runs adaptive thinking by default, so content[0] can be
-        # a ThinkingBlock (no .text) with the real answer in a later block -
-        # find the actual text block instead of assuming index 0.
         raw_text = next((b.text for b in resp.content if b.type == "text"), "")
         try:
             return _extract_json(raw_text)
         except (json.JSONDecodeError, AttributeError):
             if attempt == max_retries:
-                # last resort: surface as insufficient rather than crash
                 return {
                     "status": "insufficient",
                     "answer": None,
@@ -184,6 +242,19 @@ def call_llm(prompt, max_retries=2):
                 }
             messages.append({"role": "assistant", "content": raw_text})
             messages.append({"role": "user", "content": "That wasn't valid JSON. Respond with ONLY the JSON object, no other text."})
+
+
+def call_llm(prompt, max_retries=2):
+    """
+    Main live LLM gateway:
+    1. Uses OpenRouter GLM-5.3 / GLM-5.2 free if OPENROUTER_API_KEY is present.
+    2. Falls back to Anthropic if ANTHROPIC_API_KEY is present.
+    """
+    if os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENROUTER_KEY"):
+        return call_openrouter(prompt, max_retries=max_retries)
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return call_anthropic(prompt, max_retries=max_retries)
+    raise RuntimeError("No LLM API key configured (set OPENROUTER_API_KEY).")
 
 def simulate_llm_reasoning(question, chunks):
     """

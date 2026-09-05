@@ -97,6 +97,20 @@ def synthesize_conversational_response(
       - recommendation_action: Optional[str]
     """
     playbook = DOMAIN_PLAYBOOK.get(control_intent, {})
+
+    # Try live OpenRouter GLM generation first
+    live_resp = call_openrouter_conversational(
+        question=question,
+        control_intent=control_intent,
+        raw_status=raw_status,
+        raw_answer=raw_answer,
+        conflict_explanation=conflict_explanation,
+        guardrail_note=guardrail_note,
+        chunks=chunks,
+    )
+    if live_resp and live_resp.get("conversational_reply"):
+        return live_resp
+
     top_text = chunks[0]["text"] if chunks else ""
     cleaned_top = clean_snippet(top_text)
 
@@ -195,3 +209,106 @@ def synthesize_conversational_response(
         "recommendation": advisory_rec,
         "recommendation_action": None,
     }
+
+import json
+import os
+import urllib.request
+
+def call_openrouter_conversational(
+    question: str,
+    control_intent: str,
+    raw_status: str,
+    raw_answer: Optional[str],
+    conflict_explanation: Optional[str],
+    guardrail_note: Optional[str],
+    chunks: List[Dict[str, Any]],
+) -> Optional[Dict[str, Any]]:
+    """
+    Invokes live OpenRouter GLM-5.3 / GLM-5.2 free model to generate
+    conversational analyst dialogue, clarifying questions, and recommendations.
+    """
+    api_key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENROUTER_KEY")
+    if not api_key:
+        return None
+
+    models = [
+        os.environ.get("OPENROUTER_MODEL", "z-ai/glm-5.2:free"),
+        "z-ai/glm-5.3-flash",
+        "z-ai/glm-5.3",
+        "openrouter/free",
+    ]
+
+    evidence_text = "\n".join([f"- [{c.get('source', '')}]: {c.get('text', '')[:250]}" for c in chunks[:4]])
+
+    system_msg = (
+        "You are Sentinel, an autonomous AI Security Analyst for enterprise compliance reviews. "
+        "Strict Golden Rule: NEVER fabricate answers. Ground strictly in retrieved evidence. "
+        "If evidence conflicts or is unclear, ask a targeted clarifying question and provide an authoritative "
+        "recommendation (NIST/SOC 2 aligned). Respond strictly with valid JSON."
+    )
+
+    user_msg = f"""Analyze this user query against our company security evidence:
+
+USER QUERY:
+{question}
+
+CONTROL AREA:
+{control_intent}
+
+VERIFIED STATUS:
+{raw_status}
+
+RETRIEVED COMPANY EVIDENCE:
+{evidence_text}
+
+{f"CONFLICT DISCREPANCY: {conflict_explanation}" if conflict_explanation else ""}
+
+Return strictly JSON:
+{{
+  "conversational_reply": "<natural, professional, thorough answer grounded strictly in the evidence>",
+  "clarifying_question": "<targeted back-question if unclear or conflict, else null>",
+  "recommendation": "<authoritative recommendation, else null>",
+  "recommendation_action": "<concise statement to save as confirmed practice in 1 click, else null>"
+}}
+"""
+
+    headers = {
+        "Authorization": f"Bearer {api_key.strip()}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:3000",
+        "X-Title": "Sentinel AI Security Analyst",
+    }
+
+    for model in models:
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_msg},
+                {"role": "user", "content": user_msg},
+            ],
+            "temperature": 0.2,
+        }
+
+        try:
+            req = urllib.request.Request(
+                "https://openrouter.ai/api/v1/chat/completions",
+                data=json.dumps(payload).encode("utf-8"),
+                headers=headers,
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                choices = data.get("choices", [])
+                if choices:
+                    raw_text = choices[0].get("message", {}).get("content", "").strip()
+                    # extract json
+                    brace_match = re.search(r"\{.*\}", raw_text, re.DOTALL)
+                    if brace_match:
+                        parsed = json.loads(brace_match.group(0))
+                        if "conversational_reply" in parsed:
+                            parsed["_model"] = model
+                            return parsed
+        except Exception:
+            continue
+
+    return None
