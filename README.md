@@ -18,20 +18,20 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│             SENTINEL Interactive Next.js UI (Port 3000)      │
+│             SENTINEL Interactive Next.js UI (Port 3000)     │
 │  - Chat Console (Enlarged high-contrast typography)         │
 │  - Live Graph Traversal Canvas (@xyflow/react + dagre)      │
-│  - Interactive Human Resolution & Clarification Inputs       │
+│  - Interactive Human Resolution & Clarification Inputs      │
 │  - Persistent Security Profile Sidebar (Real-time sync)     │
-│  - Modal Evidence Drawer (Exact block locators & quotes)     │
+│  - Modal Evidence Drawer (Exact block locators & quotes)    │
 └──────────────────────────────┬──────────────────────────────┘
                                │ JSON API (/api/chat, /api/profile, /api/corpus)
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                 FastAPI Backend Engine (Port 8000)           │
+│                 FastAPI Backend Engine (Port 8000)          │
 │  - server.py (Lightweight, structured payloads only)        │
-│  - No raw prompt dumps or multi-megabyte traces to client    │
-│  - Multi-turn conversation resolver & stakeholder memory     │
+│  - No raw prompt dumps or multi-megabyte traces to client   │
+│  - Multi-turn conversation resolver & stakeholder memory    │
 └──────────────────────────────┬──────────────────────────────┘
                                │
             ┌──────────────────┴──────────────────┐
@@ -87,7 +87,9 @@ When you open `http://localhost:3000/analyst`, the console provides three quick-
 ### Scenario 1: Verified Document Answer (Q1.0)
 - **Question**: *"Does your organization have a formal Information Security Program established?"*
 - **Behavior**:
-  - Traverses `QuestionnaireQuestion[1.0]` $ightarrow$ `ControlArea[Security Governance]` $ightarrow$ `Policy[Information Security Policy v1.0]`.
+  - Traverses `QuestionnaireQuestion[1.0]` $
+ightarrow$ `ControlArea[Security Governance]` $
+ightarrow$ `Policy[Information Security Policy v1.0]`.
   - Cites Section 1 Scope and Purpose verbatim.
   - Assigns **High Confidence (0.90)** with status `VERIFIED FROM DOCUMENTS`.
   - Automatically records the verified response in the right-hand **Security Profile** sidebar.
@@ -95,7 +97,8 @@ When you open `http://localhost:3000/analyst`, the console provides three quick-
 ### Scenario 2: Contradiction Detection & Investigation (Q22.0)
 - **Question**: *"Where is company and customer data hosted?"*
 - **Behavior**:
-  - Traverses `ControlArea[Hosting Architecture]` $ightarrow$ `Conflict[CONFLICT-001]`.
+  - Traverses `ControlArea[Hosting Architecture]` $
+ightarrow$ `Conflict[CONFLICT-001]`.
   - **Surfaces Contradiction**: Flags that Information Security Policy Sections 8 & 12 claim zero on-premises servers, while Asset Inventory rows 10 & 13 log an active on-premise Dell PowerEdge R740 backup server in the HQ server room.
   - Explains both sides transparently to the user.
   - Renders a prominent action button: `↳ Clarify: Which requirement is current for your organization?`.
