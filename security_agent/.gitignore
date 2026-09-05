@@ -1,0 +1,5 @@
+.env
+security_profile.json
+chunks.json
+__pycache__/
+*.pyc
