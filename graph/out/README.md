@@ -14,8 +14,8 @@ Generated artifacts for importing the enriched security corpus into Neo4j.
 - Sources: 26
 - Curated documents: 28
 - Questionnaire questions: 66
-- Nodes: 9630
-- Relationships: 10507
+- Nodes: 9646
+- Relationships: 10523
 
 ## External Data Rule
 
