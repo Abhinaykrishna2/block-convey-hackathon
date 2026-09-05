@@ -294,6 +294,13 @@ def chat(body: ChatBody):
             "reply": f"Recorded your confirmation for [{qid}]:\n\n\"{message}\"\n\nSaved to persistent memory store (security_profile.json). Future questions on this topic will use this verified practice.",
             "status": "confirmed",
             "confidence": 1.0,
+            "confidenceBasis": {
+                "source_freshness": "Immediate: Live stakeholder confirmation submitted via console.",
+                "directness": "Direct human resolution from authorized security stakeholder.",
+                "cross_verification": "Persisted to security_profile.json as active ground truth.",
+                "summary": "Full confidence (1.00): Confirmed directly by authorized stakeholder."
+            },
+            "externalCheck": None,
             "citations": [],
             "graphTrace": trace_data,
             "followUp": None,
@@ -328,6 +335,13 @@ def chat(body: ChatBody):
             "reply": f"{prefix}:\n\n{ans_str}",
             "status": "confirmed" if is_user else "remembered",
             "confidence": rec.get("confidence", 1.0),
+            "confidenceBasis": {
+                "source_freshness": "Current: Loaded from persistent security profile store.",
+                "directness": "Direct verified/confirmed record.",
+                "cross_verification": "Persisted in security_profile.json.",
+                "summary": f"{'Stakeholder confirmed' if is_user else 'Document verified'} record recalled from persistent memory."
+            },
+            "externalCheck": None,
             "citations": rec.get("citations", []),
             "graphTrace": build_graph_trace(message, RETRIEVER, result=None, memo_hit=rec),
             "followUp": None,
@@ -390,6 +404,8 @@ def chat(body: ChatBody):
         "reply": reply,
         "status": final_status,
         "confidence": confidence,
+        "confidenceBasis": result.get("confidence_basis"),
+        "externalCheck": result.get("external_check"),
         "citations": citations,
         "graphTrace": graph_trace,
         "followUp": follow_up,

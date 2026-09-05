@@ -13,6 +13,20 @@ type Message = {
   role: "user" | "assistant";
   text: string;
   status?: Status;
+  confidence?: number;
+  confidenceBasis?: {
+    source_freshness: string;
+    directness: string;
+    cross_verification: string;
+    summary: string;
+  };
+  externalCheck?: {
+    standard: string;
+    title: string;
+    url: string;
+    benchmark_summary: string;
+    provider: string;
+  };
   citations?: Citation[];
   graphTrace?: Trace;
   pending?: boolean;
@@ -141,6 +155,9 @@ export default function Analyst() {
       const data = await r.json() as {
         reply: string;
         status?: Status;
+        confidence?: number;
+        confidenceBasis?: Message["confidenceBasis"];
+        externalCheck?: Message["externalCheck"];
         citations?: Citation[];
         graphTrace?: Trace;
         followUp?: string | null;
@@ -154,6 +171,9 @@ export default function Analyst() {
               role: "assistant",
               text: data.reply,
               status: data.status,
+              confidence: data.confidence,
+              confidenceBasis: data.confidenceBasis,
+              externalCheck: data.externalCheck,
               citations: data.citations ?? [],
               graphTrace: data.graphTrace ?? m.graphTrace,
               pending: false,
@@ -253,12 +273,65 @@ export default function Analyst() {
                   className="ansbox"
                   style={{ ["--rail" as any]: STATUS_META[m.status ?? "ask_user"].color }}
                 >
-                  {m.status && (
-                    <span className="badge" style={{ color: STATUS_META[m.status].color, borderColor: STATUS_META[m.status].color + "55" }}>
-                      {STATUS_META[m.status].label}
-                    </span>
-                  )}
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", marginBottom: "8px" }}>
+                    {m.status && (
+                      <span className="badge" style={{ color: STATUS_META[m.status].color, borderColor: STATUS_META[m.status].color + "55" }}>
+                        {STATUS_META[m.status].label}
+                      </span>
+                    )}
+                    {m.confidence !== undefined && (
+                      <span style={{ fontSize: "12.5px", color: "var(--tx2)", fontFamily: "ui-monospace, monospace" }}>
+                        Confidence: <b>{Math.round(m.confidence * 100)}%</b>
+                      </span>
+                    )}
+                    {m.externalCheck && (
+                      <a
+                        href={m.externalCheck.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          fontSize: "11.5px",
+                          color: "var(--doc)",
+                          border: "1px solid var(--doc)",
+                          borderRadius: "99px",
+                          padding: "2px 10px",
+                          textDecoration: "none",
+                          fontWeight: 600,
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          background: "rgba(61,122,140,0.08)"
+                        }}
+                        title={m.externalCheck.benchmark_summary}
+                      >
+                        ⚖ Standard: {m.externalCheck.standard} ↗
+                      </a>
+                    )}
+                  </div>
                   <p className="ans">{m.text}</p>
+                  {m.confidenceBasis && (
+                    <div style={{ marginTop: "12px", padding: "11px 15px", borderRadius: "9px", background: "rgba(44,38,30,0.035)", border: "1px solid var(--line)", fontSize: "13px" }}>
+                      <div style={{ fontWeight: 700, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.09em", color: "var(--tx3)", marginBottom: "5px" }}>
+                        Confidence Basis & Evidence Evaluation
+                      </div>
+                      <div style={{ color: "var(--tx2)", lineHeight: 1.6 }}>
+                        <div><b>• Source Freshness:</b> {m.confidenceBasis.source_freshness}</div>
+                        <div><b>• Directness:</b> {m.confidenceBasis.directness}</div>
+                        <div><b>• Cross-Verification:</b> {m.confidenceBasis.cross_verification}</div>
+                      </div>
+                    </div>
+                  )}
+                  {m.externalCheck && (
+                    <div style={{ marginTop: "10px", padding: "11px 15px", borderRadius: "9px", background: "rgba(61,122,140,0.06)", border: "1px solid rgba(61,122,140,0.25)", fontSize: "13px" }}>
+                      <div style={{ fontWeight: 700, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.09em", color: "var(--doc)", marginBottom: "4px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span>External Authority Standard Check: {m.externalCheck.standard}</span>
+                        <span style={{ fontSize: "10px", opacity: 0.85, textTransform: "none" }}>{m.externalCheck.provider}</span>
+                      </div>
+                      <div style={{ color: "var(--tx)", lineHeight: 1.55 }}>
+                        {m.externalCheck.benchmark_summary}
+                      </div>
+                    </div>
+                  )}
                   {!!m.citations?.length && (
                     <div className="chips">
                       {m.citations.map((c) => (

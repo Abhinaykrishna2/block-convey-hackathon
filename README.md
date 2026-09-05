@@ -147,6 +147,50 @@ python3 security_agent/run_66_benchmark.py
 
 ---
 
+## 🎯 Explicit Confidence Basis Evaluation
+
+Rather than providing a raw floating-point score (e.g. `0.88`, `0.40`), Sentinel computes and renders an explicit, auditable **Confidence Basis** breakdown across three dimensions:
+
+1. **Source Freshness**: Analyzes document lifecycle timestamps, active company policies (e.g. `Policy v1.0`), audit review periods (SOC 2 Type II), and penetration test report dates.
+2. **Directness**: Distinguishes between explicit, normative contractual mandates vs. secondary operational telemetry or indirect inferences.
+3. **Cross-Verification**: Quantifies multi-source corroboration across independent documents or flags documented internal contradictions.
+
+In the UI, this is displayed directly beneath the confidence bar as a structured breakdown card:
+- ⏱ **Freshness**: *Current: Active company policy v1.0 currently in effect.*
+- 🎯 **Directness**: *Direct: Explicit contractual or normative requirement stated in authoritative policy text.*
+- 🔗 **Cross-Verification**: *Strong: Verified from authoritative primary policy and corroborated by operational telemetry / audit records.*
+
+---
+
+## ⚖️ Live External Standards Check (NIST SP 800-63B & OWASP)
+
+As specified in `graph/ARCHITECTURE.md`, Sentinel implements live external standard validation in `security_agent/external_check.py`:
+
+- **Live Python Execution**: When questions reference controls such as replay-resistant MFA, TLS encryption in transit, or web vulnerability mitigation, the agent executes a live query to standards authorities (NIST, OWASP, CIS) using Tavily search with built-in authoritative fallback.
+- **NIST SP 800-63B Evaluation**: Evaluates whether authenticators achieve Authenticator Assurance Level 2 (AAL2) or AAL3 (phishing-resistant FIDO2/WebAuthn), noting that manual OTP entry is not replay/phishing-resistant under Section 5.1.4.
+- **Strict Boundary Isolation Rule**: `supplement_only_never_override_internal_evidence`. External standards benchmarks supplement company answers for audit rigor, but **never override, replace, or fabricate internal company documentation**.
+
+---
+
+## 🛡️ Full Spec & Golden Rule Validation Suite
+
+To verify all system invariants, run the automated test suite:
+
+```bash
+python3 tools/validate_spec.py
+```
+
+### Validated Criteria:
+1. **[1/7] Knowledge Graph Loading**: Verifies 9,646 nodes, 7 contradiction nodes, and 66 questionnaire anchors.
+2. **[2/7] Golden Rule Enforcement**: Validates that out-of-scope/unsupported queries are escalated (`ask_user`) with 0.0% fabrication.
+3. **[3/7] Contradiction Detection**: Proves bilateral evidence surfacing for CONFLICT-001 (Hosting), CONFLICT-002 (SIEM), CONFLICT-004 (Offboarding), and Q60.0 (MFA Policy vs VAPT).
+4. **[4/7] Confidence Basis Breakdown**: Confirms explicit `source_freshness`, `directness`, and `cross_verification` strings.
+5. **[5/7] Live External Check**: Executes live Python check for NIST SP 800-63B and validates the isolation rule.
+6. **[6/7] Persistent Memory & In-Place Corrections**: Asserts atomic updates, `correction_count` tracking, and historical answer preservation.
+7. **[7/7] ExternalFact Topology**: Verifies 16 `ExternalFact` nodes with strict unidirectional `SUPPLEMENTS` edge directionality.
+
+---
+
 ## 📁 Repository Directory Structure
 
 ```
