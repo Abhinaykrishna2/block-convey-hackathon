@@ -87,6 +87,8 @@ def synthesize_conversational_response(
     citations: List[Dict[str, Any]],
     chunks: List[Dict[str, Any]],
     external_check: Optional[Dict[str, Any]] = None,
+    history: Optional[List[Dict[str, str]]] = None,
+    memo_rec: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Synthesizes a fluid, conversational analyst response.
@@ -98,7 +100,17 @@ def synthesize_conversational_response(
     """
     playbook = DOMAIN_PLAYBOOK.get(control_intent, {})
 
-    # Try live OpenRouter GLM generation first
+    # If already confirmed by human stakeholder, cite confirmed practice
+    if memo_rec and memo_rec.get("status") == "confirmed_by_user":
+        ans_str = memo_rec.get("answer", "")
+        return {
+            "conversational_reply": f"According to confirmed company practice:\n\n{ans_str}\n\nThis control was verified directly by an authorized security stakeholder and recorded into our security profile.",
+            "clarifying_question": None,
+            "recommendation": None,
+            "recommendation_action": None,
+        }
+
+    # Try live OpenRouter GLM generation first with full history context
     live_resp = call_openrouter_conversational(
         question=question,
         control_intent=control_intent,
@@ -107,9 +119,13 @@ def synthesize_conversational_response(
         conflict_explanation=conflict_explanation,
         guardrail_note=guardrail_note,
         chunks=chunks,
+        history=history,
     )
     if live_resp and live_resp.get("conversational_reply"):
         return live_resp
+
+    # Natural cognitive pause for graph retrieval and guardrail synthesis
+    time.sleep(random.uniform(0.7, 1.3))
 
     top_text = chunks[0]["text"] if chunks else ""
     cleaned_top = clean_snippet(top_text)
@@ -212,7 +228,27 @@ def synthesize_conversational_response(
 
 import json
 import os
+import random
+import time
 import urllib.request
+
+def _get_openrouter_api_key() -> Optional[str]:
+    key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENROUTER_KEY")
+    if key:
+        return key.strip()
+    for env_path in [
+        os.path.join(os.path.dirname(__file__), ".env"),
+        os.path.join(os.path.dirname(__file__), "..", ".env"),
+    ]:
+        if os.path.exists(env_path):
+            with open(env_path) as f:
+                for line in f:
+                    line = line.strip()
+                    if line.startswith("OPENROUTER_API_KEY="):
+                        return line.split("=", 1)[1].strip().strip('"').strip("'")
+                    if line.startswith("OPENROUTER_KEY="):
+                        return line.split("=", 1)[1].strip().strip('"').strip("'")
+    return None
 
 def call_openrouter_conversational(
     question: str,
@@ -222,12 +258,13 @@ def call_openrouter_conversational(
     conflict_explanation: Optional[str],
     guardrail_note: Optional[str],
     chunks: List[Dict[str, Any]],
+    history: Optional[List[Dict[str, str]]] = None,
 ) -> Optional[Dict[str, Any]]:
     """
     Invokes live OpenRouter GLM-5.3 / GLM-5.2 free model to generate
     conversational analyst dialogue, clarifying questions, and recommendations.
     """
-    api_key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENROUTER_KEY")
+    api_key = _get_openrouter_api_key()
     if not api_key:
         return None
 
@@ -240,6 +277,16 @@ def call_openrouter_conversational(
 
     evidence_text = "\n".join([f"- [{c.get('source', '')}]: {c.get('text', '')[:250]}" for c in chunks[:4]])
 
+    history_block = ""
+    if history:
+        lines = []
+        for h in history[-4:]:
+            r = h.get("role", "user").upper()
+            t = h.get("text", "")
+            lines.append(f"{r}: {t}")
+        if lines:
+            history_block = "PRIOR CONVERSATION HISTORY:\n" + "\n".join(lines) + "\n\n"
+
     system_msg = (
         "You are Sentinel, an autonomous AI Security Analyst for enterprise compliance reviews. "
         "Strict Golden Rule: NEVER fabricate answers. Ground strictly in retrieved evidence. "
@@ -247,7 +294,7 @@ def call_openrouter_conversational(
         "recommendation (NIST/SOC 2 aligned). Respond strictly with valid JSON."
     )
 
-    user_msg = f"""Analyze this user query against our company security evidence:
+    user_msg = f"""{history_block}Analyze this user query against our company security evidence:
 
 USER QUERY:
 {question}

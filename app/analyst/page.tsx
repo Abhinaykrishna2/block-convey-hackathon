@@ -216,7 +216,7 @@ export default function Analyst() {
   return (
     <div className="app">
       <style>{css}</style>
-      <header>
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
           <a href="/" style={{ fontSize: 14, color: "#8a8074", textDecoration: "none" }}>← Back</a>
           <div className="brand">SENTINEL <span>ANALYST</span></div>
@@ -227,6 +227,29 @@ export default function Analyst() {
               : " · waiting for the security agent"}
           </div>
         </div>
+        <button
+          type="button"
+          style={{
+            background: "rgba(44,38,30,0.04)",
+            border: "1px solid var(--line)",
+            borderRadius: "8px",
+            padding: "6px 14px",
+            fontSize: "12.5px",
+            color: "var(--tx2)",
+            cursor: "pointer",
+            fontWeight: 500,
+          }}
+          title="Clear chat and reset persistent profile memory"
+          onClick={async () => {
+            setMessages([]);
+            setAnswering(null);
+            setDraft("");
+            await fetch("/api/profile/reset", { method: "POST" });
+            void loadProfile();
+          }}
+        >
+          ↺ New Session (Clean Slate)
+        </button>
       </header>
 
       <main>
@@ -502,10 +525,33 @@ export default function Analyst() {
       </div>
 
       <aside>
-        <h3>
-          Security profile
-          {!!profile?.total_questions && <span>{profile.total_questions}</span>}
-        </h3>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+          <h3 style={{ margin: 0 }}>
+            Security profile
+            {!!profile?.total_questions && <span>{profile.total_questions}</span>}
+          </h3>
+          {!!profile?.total_questions && (
+            <button
+              type="button"
+              style={{
+                background: "transparent",
+                border: "1px solid var(--line)",
+                borderRadius: "5px",
+                padding: "2px 8px",
+                fontSize: "11px",
+                color: "var(--tx3)",
+                cursor: "pointer",
+              }}
+              title="Reset profile memory to clean slate"
+              onClick={async () => {
+                await fetch("/api/profile/reset", { method: "POST" });
+                void loadProfile();
+              }}
+            >
+              Reset
+            </button>
+          )}
+        </div>
         {profile?.total_questions
           ? Object.values(profile.questions)
               .sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))

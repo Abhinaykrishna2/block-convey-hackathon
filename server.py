@@ -249,6 +249,12 @@ def update_profile(record: Dict[str, Any]):
     return {"success": True, "record": updated, "summary": profile_store.summary_report()}
 
 
+@app.post("/api/profile/reset")
+def reset_profile():
+    profile_store.reset_profile()
+    return {"success": True, "summary": profile_store.summary_report()}
+
+
 @app.post("/api/chat")
 def chat(body: ChatBody):
     message = (body.message or "").strip()
@@ -308,49 +314,19 @@ def chat(body: ChatBody):
             "questionId": qid,
         }
 
-    # 2. Check if already answered in persistent memory
-    matched_q = RETRIEVER._match_question(message)
-    matched_qid = None
-    rec = None
-    if matched_q:
-        matched_qid = matched_q["properties"].get("question_id") or matched_q["id"].replace("question:", "")
-        for candidate_key in (matched_qid, f"{matched_qid}.0", f"question:{matched_qid}", matched_qid.replace(".0", "")):
-            if profile_store.already_answered(candidate_key):
-                rec = profile_store.get_record(candidate_key)
-                matched_qid = candidate_key
-                break
+    # 2. Multi-turn contextualization: enrich query using recent history turns
+    recent_user_turns = [h.text for h in body.history if h.role == "user"]
+    if recent_user_turns:
+        last_turn = recent_user_turns[-1]
+        is_followup = len(message.split()) <= 7 or any(
+            w in message.lower() for w in ["it", "that", "this", "they", "those", "what about", "how about", "and", "too", "also", "what if", "does it", "is it"]
+        )
+        retrieval_query = f"{last_turn} {message}" if is_followup else message
+    else:
+        retrieval_query = message
 
-    if not rec:
-        msg_norm = message.strip().lower()
-        for q_key, q_val in profile_store._profile.get("questions", {}).items():
-            if q_val.get("question_text", "").strip().lower() == msg_norm:
-                rec = q_val
-                matched_qid = q_key
-                break
-
-    if rec:
-        is_user = rec.get("status") == "confirmed_by_user"
-        ans_str = rec.get("answer", "")
-        prefix = "Confirmed by stakeholder" if is_user else "Verified from documents"
-        return {
-            "reply": f"{prefix}:\n\n{ans_str}",
-            "status": "confirmed" if is_user else "remembered",
-            "confidence": rec.get("confidence", 1.0),
-            "confidenceBasis": {
-                "source_freshness": "Current: Loaded from persistent security profile store.",
-                "directness": "Direct verified/confirmed record.",
-                "cross_verification": "Persisted in security_profile.json.",
-                "summary": f"{'Stakeholder confirmed' if is_user else 'Document verified'} record recalled from persistent memory."
-            },
-            "externalCheck": None,
-            "citations": rec.get("citations", []),
-            "graphTrace": build_graph_trace(message, RETRIEVER, result=None, memo_hit=rec),
-            "followUp": None,
-            "questionId": matched_qid,
-        }
-
-    # 3. Query security graph and execute guardrailed agent loop
-    result = process_question(message, RETRIEVER, top_k=12)
+    # 3. Always execute real-time GraphTreeRetriever traversal on the incoming question
+    result = process_question(retrieval_query, RETRIEVER, top_k=12)
     final_status = result.get("final_status", "ask_user")
     confidence = result.get("confidence", 0.0)
     answer = (result.get("answer") or "").strip()
@@ -373,9 +349,33 @@ def chat(body: ChatBody):
             "sourceType": infer_source_type(base_src),
         })
 
-    # Conversational synthesis with proactive recommendation & targeted back-question
-    control_intent = parse_control_intent(message)
-    retrieved_chunks = RETRIEVER.retrieve(message, top_k=12)
+    # Check if a human stakeholder previously confirmed this control during this session
+    matched_q = RETRIEVER._match_question(message)
+    matched_qid = None
+    rec = None
+    if matched_q:
+        matched_qid = matched_q["properties"].get("question_id") or matched_q["id"].replace("question:", "")
+        for candidate_key in (matched_qid, f"{matched_qid}.0", f"question:{matched_qid}", matched_qid.replace(".0", "")):
+            if profile_store.already_answered(candidate_key):
+                rec = profile_store.get_record(candidate_key)
+                matched_qid = candidate_key
+                break
+
+    if not rec:
+        msg_norm = message.strip().lower()
+        for q_key, q_val in profile_store._profile.get("questions", {}).items():
+            if q_val.get("question_text", "").strip().lower() == msg_norm:
+                rec = q_val
+                matched_qid = q_key
+                break
+
+    if rec and rec.get("status") == "confirmed_by_user":
+        final_status = "confirmed"
+        confidence = 1.0
+
+    # 4. Conversational synthesis with proactive recommendation, back-question & full history
+    control_intent = parse_control_intent(retrieval_query)
+    retrieved_chunks = RETRIEVER.retrieve(retrieval_query, top_k=12)
     conv_data = synthesize_conversational_response(
         question=message,
         control_intent=control_intent,
@@ -387,6 +387,8 @@ def chat(body: ChatBody):
         citations=citations,
         chunks=retrieved_chunks,
         external_check=result.get("external_check"),
+        history=[{"role": h.role, "text": h.text} for h in body.history],
+        memo_rec=rec,
     )
 
     reply = conv_data["conversational_reply"]
@@ -410,7 +412,8 @@ def chat(body: ChatBody):
             citations=citations,
         )
 
-    graph_trace = build_graph_trace(message, RETRIEVER, result=result)
+    # Graph trace is built from the LIVE retrieval results
+    graph_trace = build_graph_trace(retrieval_query, RETRIEVER, result=result, memo_hit=rec)
 
     return {
         "reply": reply,
