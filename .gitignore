@@ -13,3 +13,14 @@ graph/out/external_facts.tavily.json
 extracted_media/
 node_modules/
 .next/
+
+# API keys and environment files
+*.env*
+.env*
+security_agent/.env
+
+# Demo scripts
+*DEMO*SCRIPT*
+*demo*script*
+DEMO_VIDEO_SCRIPT.md
+SENTINEL_DEMO_SCRIPT.md

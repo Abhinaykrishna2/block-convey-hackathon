@@ -389,8 +389,38 @@ def simulate_llm_reasoning(question, chunks):
         }
 
 
-    # 8. Insufficient evidence check
-    if not chunks or max(c["score"] for c in chunks) < 0.15:
+    # 8. Insufficient evidence / Relevance check (Strict Golden Rule)
+    if not chunks:
+        return {
+            "status": "insufficient",
+            "answer": None,
+            "confidence": 0.0,
+            "citations": [],
+            "conflict_explanation": None,
+        }
+
+    # Extract meaningful query terms
+    q_words = {
+        w for w in re.findall(r"\b[a-z]{3,}\b", q_lower)
+        if w not in {"what", "where", "does", "have", "with", "from", "your", "their", "this", "that", "company", "regodit", "tell", "show"}
+    }
+
+    # If query has no recognizable terms (e.g. math like "2+2", symbols) or scores are too low
+    if not q_words or max(c.get("score", 0) for c in chunks) < 0.25:
+        return {
+            "status": "insufficient",
+            "answer": None,
+            "confidence": 0.0,
+            "citations": [],
+            "conflict_explanation": None,
+        }
+
+    top = chunks[0]
+    top_words = set(re.findall(r"\b[a-z]{3,}\b", top["text"].lower()))
+    has_overlap = bool(q_words & top_words)
+
+    # Require semantic/keyword overlap to avoid answering unrelated queries
+    if not has_overlap and top.get("score", 0) < 0.90:
         return {
             "status": "insufficient",
             "answer": None,
@@ -399,8 +429,7 @@ def simulate_llm_reasoning(question, chunks):
             "conflict_explanation": None,
         }
 
-    # default: treat top chunk as a confident answer
-    top = chunks[0]
+    # default: verified answer grounded in matched chunk
     return {
         "status": "answered",
         "answer": f"Based on company documentation: {top['text'][:200]}",

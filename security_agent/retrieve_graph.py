@@ -106,8 +106,12 @@ class GraphTreeRetriever:
             if q["properties"].get("question", "").strip().lower() == query_norm:
                 return q
 
-        # 2. Number prefix match: "Q1", "1.0", "Q60", etc.
-        m = re.search(r"\b(?:q)?([0-9]{1,2}(?:\.0)?)\b", query_norm)
+        # 2. Number prefix match: strictly "Q1", "Question 1", "item 22", or solitary "22.0"
+        m = re.search(r"\b(?:question|item|control)\s*#?\s*([0-9]{1,2}(?:\.0)?)\b", query_norm)
+        if not m:
+            m = re.search(r"\bq([0-9]{1,2}(?:\.0)?)\b", query_norm)
+        if not m and re.match(r"^\s*([0-9]{1,2}(?:\.0)?)\s*$", query_norm):
+            m = re.match(r"^\s*([0-9]{1,2}(?:\.0)?)\s*$", query_norm)
         if m:
             num = m.group(1)
             if not num.endswith(".0"):
