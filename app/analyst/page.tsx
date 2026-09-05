@@ -3,8 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import GraphTrace, { type Trace } from "../components/GraphTrace";
 import { css } from "../theme";
 
-type Status = "answered" | "conflict" | "ask_user" | "insufficient";
+type Status =
+  | "answered" | "conflict" | "ask_user" | "insufficient"
+  | "confirmed" | "remembered";
 type Citation = { id: string; source: string; quote?: string; sourceType?: string };
+type Answering = { questionId: string; question: string; followUp: string };
 type Message = {
   id: string;
   role: "user" | "assistant";
@@ -13,6 +16,24 @@ type Message = {
   citations?: Citation[];
   graphTrace?: Trace;
   pending?: boolean;
+  followUp?: string | null;
+  questionId?: string;
+  asked?: string;
+};
+
+type ProfileRecord = {
+  question_id: string;
+  question_text: string;
+  status: string;
+  answer?: string | null;
+  confidence?: number | null;
+  correction_count?: number;
+  updated_at?: string;
+};
+type Profile = {
+  total_questions: number;
+  corrected_count: number;
+  questions: Record<string, ProfileRecord>;
 };
 
 const STATUS_META: Record<string, { label: string; color: string }> = {
@@ -20,6 +41,13 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   conflict: { label: "Conflict", color: "#f59e0b" },
   ask_user: { label: "Needs input", color: "#64748b" },
   insufficient: { label: "Needs input", color: "#64748b" },
+  confirmed: { label: "Confirmed by you", color: "#9a5b32" },
+  remembered: { label: "From memory", color: "#7c6a9a" },
+};
+
+const RECORD_META: Record<string, { label: string; color: string }> = {
+  verified_from_documents: { label: "from documents", color: "#4f8a5b" },
+  confirmed_by_user: { label: "confirmed by you", color: "#9a5b32" },
 };
 
 const CHIP: Record<string, string> = {
@@ -40,13 +68,23 @@ export default function Analyst() {
     graphNodes?: number;
     conflicts?: number;
   } | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [answering, setAnswering] = useState<Answering | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const loadProfile = () =>
+    fetch("/api/profile")
+      .then((r) => r.json())
+      .then(setProfile)
+      .catch(() => undefined);
 
   useEffect(() => {
     void fetch("/api/corpus")
       .then((r) => r.json())
       .then(setCorpus)
       .catch(() => setCorpus({ ready: false, documentCount: 0, chunkCount: 0 }));
+    void loadProfile();
   }, []);
 
   useEffect(() => {
@@ -57,6 +95,8 @@ export default function Analyst() {
     const message = (text ?? draft).trim();
     if (!message || busy) return;
     setDraft("");
+    const resolving = answering;
+    setAnswering(null);
     const history = messages
       .filter((m) => !m.pending)
       .map((m) => ({ role: m.role, text: m.text }));
@@ -64,7 +104,12 @@ export default function Analyst() {
     setMessages((prev) => [
       ...prev,
       { id: `u-${Date.now()}`, role: "user", text: message },
-      { id: pendingId, role: "assistant", text: "querying the security graph…", pending: true },
+      {
+        id: pendingId,
+        role: "assistant",
+        text: resolving ? "recording your answer…" : "querying the security graph…",
+        pending: true,
+      },
     ]);
     setBusy(true);
     try {
@@ -72,21 +117,24 @@ export default function Analyst() {
       const chatP = fetch("/api/chat", {
         method: "POST",
         headers,
-        body: JSON.stringify({ message, history }),
+        body: JSON.stringify({ message, history, answering: resolving }),
       });
-      void fetch("/api/trace", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ message }),
-      })
-        .then((r) => r.json())
-        .then((d: { graphTrace?: Trace }) => {
-          if (!d.graphTrace) return;
-          setMessages((prev) => prev.map((m) => (
-            m.id === pendingId ? { ...m, graphTrace: d.graphTrace } : m
-          )));
+      // Resolutions are recorded, not retrieved - no graph to trace.
+      if (!resolving) {
+        void fetch("/api/trace", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ message }),
         })
-        .catch(() => undefined);
+          .then((r) => r.json())
+          .then((d: { graphTrace?: Trace }) => {
+            if (!d.graphTrace) return;
+            setMessages((prev) => prev.map((m) => (
+              m.id === pendingId ? { ...m, graphTrace: d.graphTrace } : m
+            )));
+          })
+          .catch(() => undefined);
+      }
 
       const r = await chatP;
       if (!r.ok) throw new Error(`chat ${r.status}`);
@@ -95,6 +143,8 @@ export default function Analyst() {
         status?: Status;
         citations?: Citation[];
         graphTrace?: Trace;
+        followUp?: string | null;
+        questionId?: string;
       };
       setOpen((o) => ({ ...o, [pendingId]: true }));
       setMessages((prev) => prev.map((m) => (
@@ -107,9 +157,13 @@ export default function Analyst() {
               citations: data.citations ?? [],
               graphTrace: data.graphTrace ?? m.graphTrace,
               pending: false,
+              followUp: data.followUp ?? null,
+              questionId: data.questionId,
+              asked: message,
             }
           : m
       )));
+      void loadProfile();
     } catch {
       setMessages((prev) => prev.map((m) => (
         m.id === pendingId
@@ -146,6 +200,7 @@ export default function Analyst() {
         </div>
       </header>
 
+      <main>
       <div className="thread">
         {messages.length === 0 && (
           <div className="starters" style={{ padding: "56px 0", alignItems: "center", width: "100%" }}>
@@ -186,6 +241,21 @@ export default function Analyst() {
                       ))}
                     </div>
                   )}
+                  {m.followUp && m.questionId && (
+                    <button
+                      className="follow"
+                      onClick={() => {
+                        setAnswering({
+                          questionId: m.questionId!,
+                          question: m.asked ?? "",
+                          followUp: m.followUp!,
+                        });
+                        inputRef.current?.focus();
+                      }}
+                    >
+                      {m.followUp}
+                    </button>
+                  )}
                   {m.graphTrace && (
                     <>
                       <button className="reveal" onClick={() => setOpen((o) => ({ ...o, [m.id]: !o[m.id] }))}>
@@ -202,15 +272,53 @@ export default function Analyst() {
         <div ref={endRef} />
       </div>
 
+      <aside>
+        <h3>
+          Security profile
+          {!!profile?.total_questions && <span>{profile.total_questions}</span>}
+        </h3>
+        {profile?.total_questions
+          ? Object.values(profile.questions)
+              .sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))
+              .map((r) => {
+                const meta = RECORD_META[r.status] ?? RECORD_META.confirmed_by_user;
+                return (
+                  <div key={r.question_id} className="pcard" style={{ borderColor: meta.color }}>
+                    <div className="pq">{r.question_text}</div>
+                    <div className="pa">{r.answer}</div>
+                    <div className="pm" style={{ color: meta.color }}>
+                      {meta.label}
+                      {r.correction_count ? ` · corrected ${r.correction_count}×` : ""}
+                    </div>
+                  </div>
+                );
+              })
+          : (
+            <p className="empty">
+              Nothing recorded yet. Answers verified from documents, and any conflict
+              you resolve, are saved here and reused on the next question.
+            </p>
+          )}
+      </aside>
+      </main>
+
       <form className="composer" onSubmit={(e) => { e.preventDefault(); void send(); }}>
+        {answering && (
+          <div className="answering">
+            <span>answering</span>
+            {answering.followUp}
+            <button type="button" onClick={() => setAnswering(null)}>✕</button>
+          </div>
+        )}
         <input
+          ref={inputRef}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Ask the security agent…"
+          placeholder={answering ? "Type the current practice…" : "Ask the security agent…"}
           disabled={busy}
         />
         <button className="primary" disabled={busy || !draft.trim()} type="submit">
-          Send
+          {answering ? "Record" : "Send"}
         </button>
       </form>
 

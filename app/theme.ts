@@ -200,9 +200,12 @@ main{display:grid;grid-template-columns:1fr 330px;gap:26px;align-items:start;mar
 .thinking i:nth-child(3){animation-delay:.3s}
 .thinking span{margin-left:9px;color:var(--tx3)}
 @keyframes bob{0%,60%,100%{opacity:.2}30%{opacity:1}}
-.follow{margin-top:14px;font-size:13px;color:var(--acc2);
-  background:rgba(201,161,91,.1);border:1px dashed rgba(154,91,50,.3);padding:9px 14px}
-.follow:hover{background:rgba(201,161,91,.18);border-style:solid;
+.follow{margin-top:14px;font-size:13px;line-height:1.55;color:var(--acc);text-align:left;
+  display:flex;align-items:flex-start;gap:9px;width:100%;
+  background:rgba(201,161,91,.1);border:1px dashed rgba(154,91,50,.32);padding:11px 15px;
+  border-radius:10px;box-shadow:none}
+.follow::before{content:"↳";flex:none;opacity:.65;font-size:12px;line-height:1.6}
+.follow:hover{background:rgba(201,161,91,.18);border-style:solid;color:var(--tx);
   box-shadow:0 0 22px -8px rgba(201,161,91,.45)}
 .reveal{margin-top:13px;font-size:11.5px;color:var(--tx3);background:none;border:none;
   padding:4px 0;box-shadow:none}
@@ -227,7 +230,7 @@ aside h3 span{background:linear-gradient(170deg,#c4844a,#9a5b32);color:#fff;
 
 /* ── composer ───────────────────────────────────────────── */
 .composer{position:fixed;bottom:0;left:0;right:0;padding:18px 26px;z-index:20;
-  display:flex;justify-content:center;gap:11px;
+  display:flex;justify-content:center;gap:11px;flex-wrap:wrap;
   background:linear-gradient(180deg,transparent,rgba(244,239,230,.94) 42%);
   backdrop-filter:blur(14px);border-top:1px solid var(--line)}
 .composer input{flex:1;max-width:840px;padding:14px 17px;border-radius:11px;font-size:14px;
@@ -235,6 +238,15 @@ aside h3 span{background:linear-gradient(170deg,#c4844a,#9a5b32);color:#fff;
   border:1px solid #e4d8c8;border-top-color:var(--edge);
   box-shadow:0 2px 10px rgba(80,60,35,.06) inset;transition:.18s}
 .composer input::placeholder{color:var(--tx3)}
+.answering{flex:0 0 100%;max-width:948px;margin:0 auto;display:flex;align-items:center;
+  gap:10px;font-size:12px;line-height:1.5;color:var(--tx2);padding:8px 13px;border-radius:9px;
+  background:rgba(201,161,91,.14);border:1px solid rgba(154,91,50,.24)}
+.answering span{flex:none;font-size:9px;text-transform:uppercase;letter-spacing:.12em;
+  font-weight:700;color:var(--acc)}
+.answering button{margin-left:auto;flex:none;padding:2px 8px;font-size:11px;border-radius:6px;
+  background:none;border:none;box-shadow:none;color:var(--tx3)}
+.answering button:hover{color:var(--acc);background:rgba(255,255,255,.6);transform:none;
+  box-shadow:none}
 .composer input:focus{outline:none;border-color:var(--acc);
   box-shadow:0 2px 10px rgba(80,60,35,.06) inset,0 0 0 3px rgba(154,91,50,.12),
              0 0 30px -8px rgba(201,161,91,.4)}
@@ -276,7 +288,7 @@ aside h3 span{background:linear-gradient(170deg,#c4844a,#9a5b32);color:#fff;
 @keyframes gin{from{opacity:0;transform:translateX(-5px)}}
 @keyframes blink{50%{opacity:0}}
 /* ── graph canvas (react flow) ──────────────────────────── */
-.gcanvas{position:relative;border-top:1px solid var(--line);
+.gcanvas{position:relative;border-bottom:1px solid var(--line);
   background:radial-gradient(620px 320px at 50% 35%,rgba(201,161,91,.13),transparent 72%),#fbf7f0}
 .gcanvas .react-flow__renderer{cursor:grab}
 .gcanvas .react-flow__pane.dragging{cursor:grabbing}
@@ -296,11 +308,21 @@ aside h3 span{background:linear-gradient(170deg,#c4844a,#9a5b32);color:#fff;
 .tdot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--c);
   box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 16%,transparent)}
 .tbody{min-width:0;display:flex;flex-direction:column;gap:2px}
-.tkind{font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--c);
-  font-weight:700;font-family:ui-monospace,monospace}
+.tkind{display:flex;align-items:center;gap:6px;font-size:8.5px;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--c);font-weight:700;font-family:ui-monospace,monospace}
+.tkind em{font-style:normal;text-transform:none;letter-spacing:.02em;font-weight:500;
+  color:var(--tx3);padding:1px 5px;border-radius:4px;background:rgba(44,38,30,.05)}
 .tlabel{font-size:11px;color:var(--tx);font-family:ui-monospace,SFMono-Regular,monospace;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .thandle{width:5px;height:5px;background:var(--c);border:none;opacity:.45}
+
+.gcanvas .react-flow__controls{box-shadow:none;gap:3px;display:flex;flex-direction:column;
+  margin:10px}
+.gcanvas .react-flow__controls-button{width:22px;height:22px;border:1px solid var(--line);
+  border-radius:6px;background:linear-gradient(170deg,#fffdf9,#f6efe4);color:var(--tx2);
+  box-shadow:0 1px 0 rgba(255,255,255,.8) inset;transition:.15s}
+.gcanvas .react-flow__controls-button:hover{border-color:#cbb9a4;color:var(--acc)}
+.gcanvas .react-flow__controls-button svg{fill:currentColor;max-width:10px;max-height:10px}
 
 .glegend{position:absolute;left:12px;bottom:10px;display:flex;gap:12px;flex-wrap:wrap;
   align-items:center;font-size:9.5px;font-family:ui-monospace,monospace;

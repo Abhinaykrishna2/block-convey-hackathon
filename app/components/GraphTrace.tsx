@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Background,
   BackgroundVariant,
+  Controls,
   Handle,
   MarkerType,
   Position,
@@ -34,13 +35,20 @@ const KIND: Record<NodeType, string> = {
   infra: "infra", doc: "document", message: "message", employee: "person",
 };
 
-const NW = 244;
-const NH = 46;
+const NW = 196;
+const NH = 44;
 
-type Data = { label: string; kind: NodeType; delay: number } & Record<string, unknown>;
+// "risk_management_policy_v1.0.md:L139-L151" → name + line range shown separately
+function split(label: string) {
+  const m = /^(.*?):(L\d+(?:[-–]L?\d+)?)$/.exec(label);
+  return m ? { name: m[1], lines: m[2] } : { name: label, lines: "" };
+}
+
+type Data = { label: string; kind: NodeType } & Record<string, unknown>;
 type TNode = Node<Data, "trace">;
 
 function TraceNode({ data }: NodeProps<TNode>) {
+  const { name, lines } = split(data.label);
   return (
     <motion.div
       className="tnode"
@@ -52,8 +60,11 @@ function TraceNode({ data }: NodeProps<TNode>) {
       <Handle type="target" position={Position.Left} className="thandle" />
       <span className="tdot" />
       <span className="tbody">
-        <span className="tkind">{KIND[data.kind]}</span>
-        <span className="tlabel" title={data.label}>{data.label}</span>
+        <span className="tkind">
+          {KIND[data.kind]}
+          {lines && <em>{lines}</em>}
+        </span>
+        <span className="tlabel" title={data.label}>{name}</span>
       </span>
       <Handle type="source" position={Position.Right} className="thandle" />
     </motion.div>
@@ -65,7 +76,10 @@ const NODE_TYPES = { trace: TraceNode };
 function FitView({ dep }: { dep: number }) {
   const flow = useReactFlow();
   useEffect(() => {
-    const t = setTimeout(() => void flow.fitView({ padding: 0.16, duration: 480 }), 40);
+    const t = setTimeout(
+      () => void flow.fitView({ padding: 0.14, maxZoom: 1, duration: 480 }),
+      40,
+    );
     return () => clearTimeout(t);
   }, [dep, flow]);
   return null;
@@ -92,7 +106,7 @@ export default function GraphTrace({ trace, live }: { trace: Trace; live?: boole
   const { positioned, order, height } = useMemo(() => {
     const g = new dagre.graphlib.Graph();
     g.setDefaultEdgeLabel(() => ({}));
-    g.setGraph({ rankdir: "LR", ranksep: 150, nodesep: 26, marginx: 28, marginy: 28 });
+    g.setGraph({ rankdir: "LR", ranksep: 104, nodesep: 20, marginx: 22, marginy: 22 });
     trace.nodes.forEach((n) => g.setNode(n.id, { width: NW, height: NH }));
     trace.edges.forEach((e) => {
       if (g.hasNode(e.from) && g.hasNode(e.to)) g.setEdge(e.from, e.to);
@@ -100,14 +114,14 @@ export default function GraphTrace({ trace, live }: { trace: Trace; live?: boole
     dagre.layout(g);
 
     let maxY = 0;
-    const positioned: TNode[] = trace.nodes.map((n, i) => {
+    const positioned: TNode[] = trace.nodes.map((n) => {
       const p = g.node(n.id);
       maxY = Math.max(maxY, p.y + NH / 2);
       return {
         id: n.id,
         type: "trace" as const,
         position: { x: p.x - NW / 2, y: p.y - NH / 2 },
-        data: { label: n.label, kind: n.type, delay: i },
+        data: { label: n.label, kind: n.type },
         draggable: false,
         connectable: false,
       };
@@ -117,7 +131,7 @@ export default function GraphTrace({ trace, live }: { trace: Trace; live?: boole
       .sort((a, b) => a.layer - b.layer)
       .map((n) => n.id);
 
-    return { positioned, order, height: Math.min(600, Math.max(240, maxY + 56)) };
+    return { positioned, order, height: Math.min(560, Math.max(230, maxY + 48)) };
   }, [trace]);
 
   const [visible, setVisible] = useState(live ? 0 : order.length);
@@ -185,6 +199,48 @@ export default function GraphTrace({ trace, live }: { trace: Trace; live?: boole
 
   return (
     <div className="gt">
+      {logsDone && positioned.length > 0 && (
+        <motion.div
+          className="gcanvas"
+          style={{ height }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={NODE_TYPES}
+            fitView
+            fitViewOptions={{ padding: 0.14, maxZoom: 1 }}
+            minZoom={0.3}
+            maxZoom={1.8}
+            nodesDraggable={false}
+            nodesConnectable={false}
+            elementsSelectable={false}
+            panOnScroll
+            zoomOnScroll={false}
+            proOptions={{ hideAttribution: true }}
+          >
+            <Background variant={BackgroundVariant.Dots} gap={22} size={1.1} color="#ddd0bd" />
+            <Controls showInteractive={false} position="top-right" />
+            <FitView dep={visible} />
+          </ReactFlow>
+
+          <div className="glegend">
+            {kinds.map((k) => (
+              <span key={k} style={{ ["--c" as string]: C[k] }}>
+                <i />
+                {KIND[k]}
+              </span>
+            ))}
+            <b>
+              {trace.nodes.length} nodes · {trace.edges.length} edges
+            </b>
+          </div>
+        </motion.div>
+      )}
+
       <div className="glog">
         <AnimatePresence initial={false}>
           {revealed.map((l, i) => (
@@ -204,47 +260,6 @@ export default function GraphTrace({ trace, live }: { trace: Trace; live?: boole
         </AnimatePresence>
         {!logsDone && <div className="gline cursor">▌</div>}
       </div>
-
-      {logsDone && positioned.length > 0 && (
-        <motion.div
-          className="gcanvas"
-          style={{ height }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={NODE_TYPES}
-            fitView
-            fitViewOptions={{ padding: 0.16 }}
-            minZoom={0.25}
-            maxZoom={1.6}
-            nodesDraggable={false}
-            nodesConnectable={false}
-            elementsSelectable={false}
-            panOnScroll
-            zoomOnScroll={false}
-            proOptions={{ hideAttribution: true }}
-          >
-            <Background variant={BackgroundVariant.Dots} gap={22} size={1.1} color="#ddd0bd" />
-            <FitView dep={visible} />
-          </ReactFlow>
-
-          <div className="glegend">
-            {kinds.map((k) => (
-              <span key={k} style={{ ["--c" as string]: C[k] }}>
-                <i />
-                {KIND[k]}
-              </span>
-            ))}
-            <b>
-              {trace.nodes.length} nodes · {trace.edges.length} edges
-            </b>
-          </div>
-        </motion.div>
-      )}
     </div>
   );
 }
