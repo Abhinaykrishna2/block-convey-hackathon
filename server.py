@@ -40,6 +40,7 @@ from agent_loop import process_question  # noqa: E402
 from retrieve_graph import GraphTreeRetriever, load_chunks  # noqa: E402
 import security_profile as profile_store  # noqa: E402
 from conversational_analyst import synthesize_conversational_response  # noqa: E402
+import general_analyst  # noqa: E402
 
 app = FastAPI(title="SENTINEL Regodit Security Analyst API")
 app.add_middleware(
@@ -315,55 +316,7 @@ def chat(body: ChatBody):
             "questionId": qid,
         }
 
-    # 2. General Math / Arithmetic Queries (e.g. "2+2", "what is 5*10")
-    math_pattern = r"^\s*(?:what\s+is\s+)?([0-9\.\s\+\-\*\/\(\)\^%]+?)\s*\??\s*$"
-    m_math = re.match(math_pattern, message, re.IGNORECASE)
-    if m_math:
-        candidate_expr = m_math.group(1).strip()
-        if any(op in candidate_expr for op in ["+", "-", "*", "/", "^", "%"]) and any(c.isdigit() for c in candidate_expr):
-            if not re.search(r"[a-zA-Z_]", candidate_expr):
-                try:
-                    calc_expr = candidate_expr.replace("^", "**")
-                    val = eval(calc_expr, {"__builtins__": None}, {})
-                    if isinstance(val, float) and val.is_integer():
-                        val = int(val)
-                    return {
-                        "reply": (
-                            f"**{candidate_expr} = {val}**\n\n"
-                            "*(Note: As an autonomous AI Security Analyst for Regodit, I specialize in evaluating security controls, verifying vendor questionnaires, and surfacing internal policy contradictions. Please feel free to ask questions about our cloud infrastructure, encryption, access controls, or audit readiness.)*"
-                        ),
-                        "status": "answered",
-                        "confidence": 1.0,
-                        "confidenceBasis": {
-                            "source_freshness": "N/A: General mathematical calculation.",
-                            "directness": "Direct deterministic arithmetic calculation.",
-                            "cross_verification": "Mathematical identity.",
-                            "summary": "Standard mathematical result (not derived from security documentation)."
-                        },
-                        "externalCheck": None,
-                        "citations": [],
-                        "graphTrace": {
-                            "logs": [
-                                f"received arithmetic query: '{candidate_expr}'",
-                                f"computed result: {val}",
-                                "Golden Rule: accurate calculation without fabricating security documentation citations"
-                            ],
-                            "nodes": [
-                                {"id": "q", "label": candidate_expr, "type": "query", "layer": 0},
-                                {"id": "calc", "label": f"Arithmetic: {val}", "type": "control", "layer": 1}
-                            ],
-                            "edges": [{"from": "q", "to": "calc", "rel": "EVALUATED"}]
-                        },
-                        "followUp": None,
-                        "clarifyingQuestion": None,
-                        "recommendation": None,
-                        "recommendationAction": None,
-                        "questionId": None,
-                    }
-                except Exception:
-                    pass
-
-    # 3. Conversational Greetings / Introductions
+    # 2. Conversational Greetings / Introductions
     greeting_pattern = r"^\s*(?:hi|hello|hey|greetings|good\s+(?:morning|afternoon|evening)|who\s+are\s+you|what\s+can\s+you\s+do|help)\b[\s\.\!\?]*$"
     if re.match(greeting_pattern, message, re.IGNORECASE):
         return {
@@ -402,6 +355,14 @@ def chat(body: ChatBody):
             "recommendationAction": None,
             "questionId": None,
         }
+
+    # 3. General Knowledge & Conversational Intelligence (Capitals, Math, Concepts, Trivia)
+    # If the user asks normal world-knowledge questions (e.g. "What is the capital of France?", "2+2", "What is machine learning?"),
+    # answer intelligently WITHOUT querying internal security documents or fabricating false policy citations!
+    if not general_analyst.is_security_domain_query(message, retriever=RETRIEVER):
+        gen_ans = general_analyst.handle_general_knowledge_query(message)
+        if gen_ans:
+            return gen_ans
 
     # 4. Multi-turn contextualization: enrich query using recent history turns
     recent_user_turns = [h.text for h in body.history if h.role == "user"]
