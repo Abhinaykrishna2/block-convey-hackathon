@@ -1,0 +1,605 @@
+{
+  "total_questions": 66,
+  "source_file": "Hackathon/1. Sample_Vendor questionnaire/Regodit_Comprehensive_Vendor_Security_Questionnaire_Clean.xlsx",
+  "source_sheet": "Vendor Security Responses",
+  "reference_sheet": "SecurityQuestionnaireMatrix",
+  "questions": [
+    {
+      "id": "1.0",
+      "row": 5,
+      "source_cell": "B5",
+      "question": "Does your organization have a formal Information Security Program established?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "2.0",
+      "row": 6,
+      "source_cell": "B6",
+      "question": "Does your organization have a published set of Information Security policies, standards and procedures?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "3.0",
+      "row": 7,
+      "source_cell": "B7",
+      "question": "Does your organization have a public information security policy?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "4.0",
+      "row": 8,
+      "source_cell": "B8",
+      "question": "Does your organization document role descriptions including relevant cybersecurity & data protection responsibilities?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "5.0",
+      "row": 9,
+      "source_cell": "B9",
+      "question": "Is there a procedure in place for overseeing cybersecurity and data protection controls, that includes how issues are escalated to leadership?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "6.0",
+      "row": 11,
+      "source_cell": "B11",
+      "question": "Will you be using any contractors or sub-contractors to complete the engagement with Client XYZ?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "7.0",
+      "row": 12,
+      "source_cell": "B12",
+      "question": "Do you have a third-party risk management program/policy in place?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "8.0",
+      "row": 13,
+      "source_cell": "B13",
+      "question": "Please attach your Third-Party Risk Management Policy.",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "9.0",
+      "row": 14,
+      "source_cell": "B14",
+      "question": "Does your third-party risk management program include supply chain protections?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "10.0",
+      "row": 15,
+      "source_cell": "B15",
+      "question": "Do your vendor and subcontractor agreements include clauses requiring adherence to cybersecurity and data privacy standards, and do these requirements flow down to all applicable subcontractors and suppliers?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "11.0",
+      "row": 17,
+      "source_cell": "B17",
+      "question": "Do you provide security awareness training at onboarding and at least annually thereafter for all personnel including contractors?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "12.0",
+      "row": 18,
+      "source_cell": "B18",
+      "question": "How frequently are employees trained on policies in your organization?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "13.0",
+      "row": 19,
+      "source_cell": "B19",
+      "question": "Does your organization provide role based security awareness training at least annually?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "14.0",
+      "row": 21,
+      "source_cell": "B21",
+      "question": "Does your organization have privacy controls and or Data Privacy program in place?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "15.0",
+      "row": 22,
+      "source_cell": "B22",
+      "question": "Will your personnel or your product require access to sensitive data (i.e PII, PI, PHI) to complete the engagement with Regodit?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "16.0",
+      "row": 23,
+      "source_cell": "B23",
+      "question": "Please provide a copy of your data retention schedule and secure disposal procedures",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "17.0",
+      "row": 24,
+      "source_cell": "B24",
+      "question": "Do you have a privacy policy in place? If so, please provide the attachment or URL.",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "18.0",
+      "row": 25,
+      "source_cell": "B25",
+      "question": "Does your organization ensure privacy requirements are extended to contractors and service providers through contractual agreements, and that roles and responsibilities concerning data privacy are clearly understood and documented?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "19.0",
+      "row": 27,
+      "source_cell": "B27",
+      "question": "Do you, or any third party you use to deliver services to Client XYZ, store sensitive information outside the United States? If so, where?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "20.0",
+      "row": 28,
+      "source_cell": "B28",
+      "question": "Do you require data-at-rest encryption for sensitive data?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "21.0",
+      "row": 29,
+      "source_cell": "B29",
+      "question": "Do you require data-in-transit encryption for sensitive data? If so, please describe the encryption protocols used.",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "22.0",
+      "row": 30,
+      "source_cell": "B30",
+      "question": "Will Regodit data be stored on site, in a data center, or by a third party?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "23.0",
+      "row": 31,
+      "source_cell": "B31",
+      "question": "Do you have data retention policies and procedures for the secure disposal of information?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "24.0",
+      "row": 32,
+      "source_cell": "B32",
+      "question": "If providing a product or SaaS platform that will access, store, or process Client XYZ data, are you able to provide applicable data flow diagrams showing how Regodit's data will flow through the tool upon request?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "25.0",
+      "row": 34,
+      "source_cell": "B34",
+      "question": "Is there a policy in place for physical security requirements for your business?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "26.0",
+      "row": 35,
+      "source_cell": "B35",
+      "question": "Do you require physical access to any Client XYZ locations to complete your engagement?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "27.0",
+      "row": 36,
+      "source_cell": "B36",
+      "question": "Are you willing to accept and acknowledge the expectations outlined in Client XYZ's Visitor Management document?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "28.0",
+      "row": 37,
+      "source_cell": "B37",
+      "question": "Does your organization have procedures in place to track assets that are brought onto Client XYZ sites?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "29.0",
+      "row": 38,
+      "source_cell": "B38",
+      "question": "Can you provide your organization's data protection policy, including evidence of physical safeguards for devices used onsite if requested?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "30.0",
+      "row": 40,
+      "source_cell": "B40",
+      "question": "Will Client XYZ be using a web application provided by you?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "31.0",
+      "row": 41,
+      "source_cell": "B41",
+      "question": "What is the name of your web application?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "32.0",
+      "row": 42,
+      "source_cell": "B42",
+      "question": "What is the function/purpose of your web application?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "33.0",
+      "row": 43,
+      "source_cell": "B43",
+      "question": "How do you report application security vulnerabilities?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "34.0",
+      "row": 44,
+      "source_cell": "B44",
+      "question": "Does your web application have an SSL/TLS certificate?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "35.0",
+      "row": 45,
+      "source_cell": "B45",
+      "question": "Does your application offer single sign-on (SSO) or are there plans to implement/offer SSO in the near future? If plans to implement in near future, include an implementation date in your justification.",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "36.0",
+      "row": 47,
+      "source_cell": "B47",
+      "question": "Do you have policies, procedures or standards in place for secure development practices?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "37.0",
+      "row": 48,
+      "source_cell": "B48",
+      "question": "Do you utilize Secure Coding Principles - (Detailed logging, encrypted credentials, etc.)?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "38.0",
+      "row": 50,
+      "source_cell": "B50",
+      "question": "Are internal vulnerability scans performed?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "39.0",
+      "row": 51,
+      "source_cell": "B51",
+      "question": "On what cadence are vulnerability scans performed?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "40.0",
+      "row": 52,
+      "source_cell": "B52",
+      "question": "What are the documented remediation timelines for critical and high patches?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "41.0",
+      "row": 54,
+      "source_cell": "B54",
+      "question": "What is the process for disaster recovery and backups?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "42.0",
+      "row": 55,
+      "source_cell": "B55",
+      "question": "Please provide a copy of your BC/DR policy for review.",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "43.0",
+      "row": 57,
+      "source_cell": "B57",
+      "question": "Do you keep a record of security events?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "44.0",
+      "row": 58,
+      "source_cell": "B58",
+      "question": "Do you monitor the security of your wireless networks?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "45.0",
+      "row": 59,
+      "source_cell": "B59",
+      "question": "Do you have an incident response plan in place? If yes, describe briefly.",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "46.0",
+      "row": 60,
+      "source_cell": "B60",
+      "question": "How often is your Incident Response Plan Tested?(Drop Down)",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "47.0",
+      "row": 61,
+      "source_cell": "B61",
+      "question": "Do you have a policy requiring prompt notice to third parties regarding information security events affecting your organization?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "48.0",
+      "row": 62,
+      "source_cell": "B62",
+      "question": "Regardless of materiality, have you had a security event in the last 5 years?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "49.0",
+      "row": 63,
+      "source_cell": "B63",
+      "question": "Do you outsource security functions to third-party providers?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "50.0",
+      "row": 65,
+      "source_cell": "B65",
+      "question": "Do you use anti virus software to protect your devices? If yes, describe.",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "51.0",
+      "row": 66,
+      "source_cell": "B66",
+      "question": "Will your organization be accessing Client XYZ's network?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "52.0",
+      "row": 67,
+      "source_cell": "B67",
+      "question": "Will you be using an Regodit asset to access Regodit's network?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "recovered_from_reference_sheet",
+      "raw_visible_question": "52.0",
+      "wording_source_cell": "B70",
+      "reference_sheet": "SecurityQuestionnaireMatrix"
+    },
+    {
+      "id": "53.0",
+      "row": 68,
+      "source_cell": "B68",
+      "question": "Please list out all authorized personnel, including first and last names and e-mail addresses from your organization that will have access to Client XYZ's assets or network.",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "54.0",
+      "row": 69,
+      "source_cell": "B69",
+      "question": "Please submit a network architecture diagram and details of your endpoint protection measures, including how your organization complies with firewall and DNS security standards when accessing XYZ's networks.",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "55.0",
+      "row": 71,
+      "source_cell": "B71",
+      "question": "Do you keep an inventory of information technology (IT) assets and software?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "56.0",
+      "row": 72,
+      "source_cell": "B72",
+      "question": "Does your organization have identity and access controls in place?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "57.0",
+      "row": 73,
+      "source_cell": "B73",
+      "question": "Does your organization leverage role-based access control?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "58.0",
+      "row": 74,
+      "source_cell": "B74",
+      "question": "Do you limit and periodically review user access privileges and controls?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "59.0",
+      "row": 75,
+      "source_cell": "B75",
+      "question": "What is the cadence of your access reviews?(Drop Down)",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "60.0",
+      "row": 76,
+      "source_cell": "B76",
+      "question": "Does your organization require replay-resistant authentication mechanisms such as OTP or MFA?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "61.0",
+      "row": 77,
+      "source_cell": "B77",
+      "question": "Are the external authenticators in use, NIST compliant?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "62.0",
+      "row": 78,
+      "source_cell": "B78",
+      "question": "Does your organization enforce the principle of least privilege?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "63.0",
+      "row": 80,
+      "source_cell": "B80",
+      "question": "Do you conduct information security risk assessments at least annually?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "64.0",
+      "row": 81,
+      "source_cell": "B81",
+      "question": "How do you prioritize critical assets for your organization?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "65.0",
+      "row": 82,
+      "source_cell": "B82",
+      "question": "Does your organization conduct penetration testing at least annually?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    },
+    {
+      "id": "66.0",
+      "row": 83,
+      "source_cell": "B83",
+      "question": "Have the findings from the most recent penetration test been remediated?",
+      "existing_response": "",
+      "additional_info": "",
+      "wording_status": "exact_source"
+    }
+  ]
+}

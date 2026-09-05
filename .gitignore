@@ -1,0 +1,5 @@
+.DS_Store
+Hackathon/
+evidence/blocks.jsonl
+__pycache__/
+*.pyc

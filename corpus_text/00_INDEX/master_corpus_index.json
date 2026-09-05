@@ -1,0 +1,814 @@
+{
+  "corpus_title": "Regodit AI Security & Compliance Knowledge Base",
+  "version": "1.0.0",
+  "generated_at": "2026-09-05T12:00:00Z",
+  "total_documents": 28,
+  "source_count": 26,
+  "total_raw_sources": 26,
+  "runtime_evidence": "evidence/blocks.jsonl",
+  "confidence_level": "100%",
+  "categories": [
+    "1. Sample_Vendor questionnaire",
+    "2. Company policies",
+    "3. Security Assessment Reports",
+    "4. Contracts_agreements",
+    "5. Infrastructure_internal info"
+  ],
+  "entity_registry": {
+    "legal_entity_name": "Solsphere AI Inc",
+    "commercial_dba_name": "Regodit / Regodit AI",
+    "affiliates": [
+      "ABC Inc. Horizons Private Limited (Bangalore, India)"
+    ],
+    "incorporation": {
+      "jurisdiction": "Dover, Delaware 19901",
+      "entity_type": "C corporation",
+      "tax_form_w9_status": "Form W-9 on file (unsigned template, EIN pending)",
+      "incorporation_date_ambiguity": "June 2025 (SOC 2 Sec 3.1) vs August 2024 (SOC 2 Sec 3.1.2)"
+    },
+    "leadership_and_governance": {
+      "sahil_pugalia": "Founder and Chief Executive Officer (CEO), Acting Chief Information Security Officer (CISO). Owns cloud infrastructure, IT, approves security policies, leads annual risk assessments.",
+      "priyanka_choudhury": "Chief Business Officer (CBO) & Chief Privacy Officer (CPO). Owns people operations, privacy, vendor compliance, policy approvals.",
+      "chief_technology_officer": "CTO / Co-Founder. Owns application code, deployments, change management, access provisioning/deprovisioning, standing production access."
+    },
+    "personnel_and_roles": {
+      "k_obrien": "Security Lead. Completes access reviews, conducts asset inventory, holds AWS Admin role, operates iPad Air for on-call security monitoring.",
+      "j_martinez": "Engineering. Holds AWS Admin role (justified 09/04/26), assigned Dell Latitude 5440.",
+      "a_patel": "Engineering. Holds AWS Editor role (justified 09/04/26), assigned MacBook Pro 14in M3.",
+      "s_wong": "IT Operations. AWS Admin role flagged to revoke and downgrade to Viewer due to inactivity (last login 07/15/26), assigned Dell UltraSharp monitor.",
+      "r_osei": "Finance. Holds AWS Viewer role (justified 09/04/26), assigned iPhone 14 enrolled in MDM.",
+      "t_nguyen": "Engineering. AWS Editor role flagged to change to Viewer due to inactivity (last login 05/10/26), assigned Lenovo ThinkPad X1 in repair.",
+      "m_delgado": "Contractor - IT Support. Laptop retired and wiped 08/30/26 per offboarding checklist, but AWS Admin role active until flagged for revocation on 09/04/26."
+    },
+    "infrastructure_and_technology_stack": {
+      "cloud_provider": "Amazon Web Services (AWS) - US regions, Multi-AZ deployment",
+      "compute_and_application": "VPC isolated private subnets, Application Load Balancers (ALB) with TLS termination, backend application containers/APIs",
+      "data_storage_and_encryption": "AWS RDS / S3 / DynamoDB, encrypted at rest using AES-256, TLS 1.2+ in transit",
+      "network_security": "CDN + WAF (DDoS filtering, TLS termination), Security Groups enforcing tier isolation (Public Subnet -> Application Tier -> Data Tier)",
+      "remote_admin_access": "VPN Gateway (enforces MFA, IP allow-list) -> Bastion Host (audited, ephemeral SSH access) -> Production VPC",
+      "logging_and_monitoring": "Cloud-native AWS CloudWatch + S3 log archival (~1 year retention). SIEM centralized logging is a planned roadmap improvement.",
+      "on_premise_footprint": "Contradiction exists: Policy says cloud-only with no on-prem data centers, but Asset Inventory lists Dell PowerEdge R740 (on-prem backup) in HQ server room and Cisco Meraki MX67 Firewall in office.",
+      "identity_and_collaboration": "Google Workspace (enforces MFA), GitHub (PR peer reviews, branch protection), Slack / Teams for internal communications"
+    }
+  },
+  "contradictions_and_investigation_playbook": [
+    {
+      "id": "CONFLICT-001",
+      "topic": "On-Premises Infrastructure & Backups",
+      "severity": "CRITICAL",
+      "description": "Information Security Policy explicitly claims zero on-premises servers, but Asset Inventory lists an active on-prem backup server and firewall.",
+      "evidence_a": "Information Security Policy v1.0 (Sec 8, Sec 12): 'The company operates no on-premises servers or data centers... the company owns no data centers or server rooms. Physical office presence is limited to a co-working facility.'",
+      "evidence_b": "Asset Inventory Regodit (Rows 10, 13): 'SN-100239 | Server | Dell PowerEdge R740 (on-prem backup) | In Use | Located in HQ server room' and 'SN-100242 | Cisco Meraki MX67 Firewall | In Use | Primary office firewall/router'",
+      "agent_guidance": "DO NOT answer 'Yes, we are 100% cloud-only' or 'No, we have on-prem servers' without investigating. Identify the conflict: Policies specify cloud-native multi-AZ AWS architecture, yet internal asset inventory records an on-premise Dell PowerEdge backup server in an HQ server room. Ask the user/stakeholder to clarify whether the on-prem server is a legacy asset, a testing sandbox, or an active operational backup."
+    },
+    {
+      "id": "CONFLICT-002",
+      "topic": "Centralized SIEM & Observability",
+      "severity": "HIGH",
+      "description": "Network architecture diagrams show an active SIEM for centralized logging, but the formal Information Security Policy states no dedicated SIEM exists.",
+      "evidence_a": "Network Architecture Diagrams (Figure 2) & admin-access-logging-diagram.png: Shows 'Centralized logging: SIEM, alerting, retention' fed directly from Production environment.",
+      "evidence_b": "Information Security Policy v1.0 (Sec 11): 'The company does not currently operate a dedicated SIEM; centralized log analytics is a planned improvement. Cloud-native monitoring is used across the company's cloud providers. Application logs are rotated on the host and shipped to object storage for retention.'",
+      "evidence_c": "Network Architecture Diagrams PDF (Page 2 Disclaimer): 'Note: these are illustrative templates. For an actual SOC 2 engagement, the diagram must match the real configuration...'",
+      "agent_guidance": "Answer that logging is centralized via cloud-native AWS tools (CloudWatch, S3 object storage with ~1-year retention), while dedicated SIEM analytics is a planned improvement. Point out that the architecture diagram is an illustrative reference template."
+    },
+    {
+      "id": "CONFLICT-003",
+      "topic": "Company Legal Name & W-9 Entity",
+      "severity": "HIGH",
+      "description": "Company uses Regodit and Solsphere AI Inc interchangeably across legal documents, policies, and questionnaire.",
+      "evidence_a": "Form W-9 & BCP/DR Plan: 'Solsphere AI Inc', Dover, Delaware 19901, C Corporation.",
+      "evidence_b": "Employment Contract 01: 'Solsphere AI Inc (dba Regodit, having its registered office at Dover, Delaware...)'",
+      "evidence_c": "Questionnaire Tab 'Vendor Security Responses' Cell B45: 'Vendor Name as Listed on W-9:'",
+      "agent_guidance": "Provide 'Solsphere AI Inc (dba Regodit)'. Explain that Solsphere AI Inc is the legal corporate entity incorporated in Delaware, while Regodit is the commercial trade name (dba). For W-9 line 1, the verified legal name is Solsphere AI Inc."
+    },
+    {
+      "id": "CONFLICT-004",
+      "topic": "Employee & Contractor Offboarding Execution",
+      "severity": "HIGH",
+      "description": "Offboarding policy requires immediate access revocation, but access review records show contractor retained AWS Admin credentials after decommissioning.",
+      "evidence_a": "HR Policy v1.0 & Asset Inventory: Contractor M. Delgado retired on 08/30/2026; laptop SN-100240 wiped and decommissioned per offboarding checklist.",
+      "evidence_b": "Access Review Records (09/04/2026): M. Delgado still listed with active AWS Production Console Admin role; flagged as 'Access Justified: N | Action needed: Revoke access' 5 days after hardware offboarding.",
+      "agent_guidance": "Acknowledge the formal offboarding procedure exists (hardware wipe, checklist execution), but highlight that operational access review discovered a 5-day lag: contractor M. Delgado retained AWS cloud console access after hardware wipe, and the access review flagged 'Action needed: Revoke access' on 09/04/2026. Because an action request does not prove completion, the analyst must ask the user whether AWS console access was actually revoked."
+    },
+    {
+      "id": "CONFLICT-005",
+      "topic": "Company Headcount & Incorporation Date",
+      "severity": "MEDIUM",
+      "description": "The SOC 2 Type II report contains two contradictory company background statements.",
+      "evidence_a": "SOC 2 Report Section 3.1: 'incorporated in June 2025... grown to a team of twelve (12) personnel'.",
+      "evidence_b": "SOC 2 Report Section 3.1.2: 'Since its incorporation in August 2024, the company has grown to 9 personnel'.",
+      "agent_guidance": "Flag this discrepancy when asked about headcount or incorporation year. Report that official records present conflicting figures (June 2025 with 12 personnel vs August 2024 with 9 personnel), and request confirmation from HR/Leadership."
+    },
+    {
+      "id": "CONFLICT-006",
+      "topic": "Secure Development Lifecycle (SDLC) Completeness",
+      "severity": "MEDIUM",
+      "description": "The standalone SDLC document in infrastructure is an unfilled template, while actual SDLC rules are codified in the Information Security Policy.",
+      "evidence_a": "Secure Development Lifecycle Document 01.docx: Contains unfilled template placeholders like '<Company Name>', '<Policy owner>', and instructions on how to adopt the template.",
+      "evidence_b": "Information Security Policy v1.0 (Sec 13): Enforces pull-request peer reviews in GitHub and mandatory production deployment approval by CEO/CTO/CBO.",
+      "agent_guidance": "Confirm that development controls (peer PR review, branch protection, founder approvals) are active per Information Security Policy, but note that the standalone SDLC document is currently in draft template status."
+    },
+    {
+      "id": "CONFLICT-007",
+      "topic": "Vulnerability Assessment Findings & Remediation Status",
+      "severity": "HIGH",
+      "description": "VAPT report identified 20 vulnerabilities (including High CVSS 8.1 Missing Authentication and CVSS 6.5 Prompt Injection), but questionnaire Q66 asks if findings have been remediated.",
+      "evidence_a": "VAPT Report 01: Discovered 20 distinct vulnerabilities across web applications, open APIs, AI chatbot prompt injection, and excessive token lifetimes.",
+      "evidence_b": "Vulnerability and Patch Management Policy: Defines remediation SLAs (Critical = 7 days, High = 30 days, Medium = 60 days, Low = 90 days).",
+      "agent_guidance": "Do NOT blindly claim that all penetration test findings are remediated. State that 20 findings were identified in the latest VAPT report, high/critical items are undergoing remediation within the policy SLA (30 days for High), and mark full remediation status as 'Needs Confirmation / Ongoing'."
+    }
+  ],
+  "documents": [
+    {
+      "file": "vendor_security_questionnaire.md",
+      "source": "Hackathon/1. Sample_Vendor questionnaire/Regodit_Comprehensive_Vendor_Security_Questionnaire_Clean.xlsx",
+      "category": "1. Sample_Vendor questionnaire",
+      "class": "Questionnaire / Assessment Workbook",
+      "title": "Regodit Comprehensive Vendor Security Questionnaire (Clean)",
+      "summary": "18-sheet enterprise security assessment workbook containing 66 core questions across 14 security domains, vendor profiles, inherent/residual risk scoring sheets, third-party certification checklist, and reputational assessment.",
+      "topics_covered": [
+        "All 14 Security Domains (Questions 1.0 - 66.0)",
+        "Vendor Profile",
+        "Certifications Checklist",
+        "Risk Scoring",
+        "Escalations"
+      ],
+      "key_entities": [
+        "Solsphere AI Inc",
+        "Regodit",
+        "Client XYZ"
+      ],
+      "stats": {
+        "bytes": 231502,
+        "lines": 1381,
+        "sha256": "d608101812713104206db6803e47d9c165bd2eac63359884c9f35ac69fc5dec2"
+      },
+      "relative_path": "01_SAMPLE_VENDOR_QUESTIONNAIRE/vendor_security_questionnaire.md"
+    },
+    {
+      "file": "risk_matrix_heatmap_and_ranges.md",
+      "source": "Hackathon/1. Sample_Vendor questionnaire/Regodit_Comprehensive_Vendor_Security_Questionnaire_Clean.xlsx (xl/media/image1.png)",
+      "category": "1. Sample_Vendor questionnaire",
+      "class": "Scoring Matrix & Heatmap Diagram",
+      "title": "Vendor Questionnaire 4x4 Risk Matrix Heatmap & Score Ranges",
+      "summary": "Full transcription of the embedded 4x4 Probability x Impact risk scoring matrix and calibrated score slider (Low: 0-4, Medium: 4-8, High: 8-12.10, Critical: 12.10-16).",
+      "topics_covered": [
+        "Risk Assessment",
+        "Inherent Risk Scoring",
+        "Residual Risk Scoring",
+        "Escalation Triggers"
+      ],
+      "key_entities": [
+        "Risk Matrix",
+        "Scoring Scale"
+      ],
+      "stats": {
+        "bytes": 3012,
+        "lines": 53,
+        "sha256": "573012fcd118557d2ef82bb60c1891d07f1ce19d2973d5453016a1eb28eddb57"
+      },
+      "relative_path": "01_SAMPLE_VENDOR_QUESTIONNAIRE/risk_matrix_heatmap_and_ranges.md"
+    },
+    {
+      "file": "access_control_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit_access_control_policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Security Policy",
+      "title": "Regodit Access Control Policy v1.0",
+      "summary": "Defines access provisioning, least privilege, role-based access control (RBAC), multi-factor authentication (MFA) requirements across cloud infrastructure, identity providers, and code repositories, quarterly access reviews, and termination revocation.",
+      "topics_covered": [
+        "Access Control",
+        "MFA",
+        "RBAC",
+        "Access Reviews",
+        "Privilege Deprovisioning"
+      ],
+      "key_entities": [
+        "Sahil Pugalia (Owner)",
+        "Priyanka Choudhury (Approver)",
+        "Effective Date: 14 July 2026"
+      ],
+      "stats": {
+        "bytes": 6807,
+        "lines": 52,
+        "sha256": "c07281f7c2eb1d9b3b05e664e9c678c959fc7837def535b902e067b303d03f9b"
+      },
+      "relative_path": "02_COMPANY_POLICIES/access_control_policy_v1.0.md"
+    },
+    {
+      "file": "asset_management_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit_asset_management_policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Security Policy",
+      "title": "Regodit Asset Management Policy v1.0",
+      "summary": "Governs the identification, classification, inventorying, acceptable use, and disposal of corporate hardware, software licenses, and cloud assets.",
+      "topics_covered": [
+        "Asset Inventory",
+        "Hardware / Software Lifecycle",
+        "Disposal & Media Sanitization"
+      ],
+      "key_entities": [
+        "Sahil Pugalia (Owner)",
+        "Priyanka Choudhury (Approver)",
+        "Effective Date: 14 July 2026"
+      ],
+      "stats": {
+        "bytes": 9017,
+        "lines": 58,
+        "sha256": "b381c0fd5055cc1d74663b8e3cd5c65d206466ad979e245b6b411f4e974497d8"
+      },
+      "relative_path": "02_COMPANY_POLICIES/asset_management_policy_v1.0.md"
+    },
+    {
+      "file": "business_continuity_and_disaster_recovery_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit_business_continuity_and_disaster_recovery_policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Security Policy",
+      "title": "Regodit Business Continuity and Disaster Recovery Policy v1.0",
+      "summary": "Mandates daily automated database backups, multi-AZ deployment resilience, annual disaster recovery tabletop/failover testing, and RTO/RPO requirements. Confirms founders act as BCP/DR leads.",
+      "topics_covered": [
+        "BCP / DR",
+        "Daily Backups",
+        "RTO / RPO",
+        "Failover Testing"
+      ],
+      "key_entities": [
+        "Sahil Pugalia (Owner)",
+        "Priyanka Choudhury (Approver)",
+        "Effective Date: 14 July 2026"
+      ],
+      "stats": {
+        "bytes": 11949,
+        "lines": 68,
+        "sha256": "fe5a595ac154637c27614f4193ddf16f485de6f328e52a5e4929a682ab2b9415"
+      },
+      "relative_path": "02_COMPANY_POLICIES/business_continuity_and_disaster_recovery_policy_v1.0.md"
+    },
+    {
+      "file": "code_of_conduct_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit_code_of_conduct_policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Corporate Policy",
+      "title": "Regodit Code of Conduct Policy v1.0",
+      "summary": "Establishes ethical expectations, anti-harassment, conflict of interest, whistleblower protections, and legal compliance across all personnel.",
+      "topics_covered": [
+        "Governance",
+        "Ethics",
+        "Whistleblower",
+        "Compliance"
+      ],
+      "key_entities": [
+        "Priyanka Choudhury (Owner)"
+      ],
+      "stats": {
+        "bytes": 19061,
+        "lines": 147,
+        "sha256": "bb81dc79599bbeeaa37bea5785be98441aba0dfef6a6c585377c06ed3ec50576"
+      },
+      "relative_path": "02_COMPANY_POLICIES/code_of_conduct_policy_v1.0.md"
+    },
+    {
+      "file": "cryptography_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit_cryptography_policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Security Policy",
+      "title": "Regodit Cryptography Policy v1.0",
+      "summary": "Mandates AES-256 for data at rest, TLS 1.2/1.3 for data in transit, prohibition of deprecated algorithms (MD5, SHA-1, DES), and automated cloud KMS key rotation.",
+      "topics_covered": [
+        "Cryptography",
+        "Data at Rest Encryption (AES-256)",
+        "Data in Transit (TLS 1.2+)",
+        "Key Management"
+      ],
+      "key_entities": [
+        "Sahil Pugalia (Owner)",
+        "Priyanka Choudhury (Approver)",
+        "Effective Date: 14 July 2026"
+      ],
+      "stats": {
+        "bytes": 10035,
+        "lines": 61,
+        "sha256": "fddf8fda061ebd91d4c02eb3c6cc7627a096c1c4b113ade647100f9a77abd369"
+      },
+      "relative_path": "02_COMPANY_POLICIES/cryptography_policy_v1.0.md"
+    },
+    {
+      "file": "data_classification_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit_data_classification_policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Security Policy",
+      "title": "Regodit Data Classification Policy v1.0",
+      "summary": "Single source of truth defining 4 data sensitivity classifications: Public, Internal, Confidential, and Restricted. Establishes handling, access, and retention rules.",
+      "topics_covered": [
+        "Data Classification",
+        "PII / Sensitive Data Handling",
+        "Data Protection"
+      ],
+      "key_entities": [
+        "Sahil Pugalia (Owner)",
+        "Priyanka Choudhury (Approver)",
+        "Effective Date: 14 July 2026"
+      ],
+      "stats": {
+        "bytes": 11603,
+        "lines": 89,
+        "sha256": "a3e301350ea2df7728c3d30ac3d2e04a97c6a525cbdd4dd07a36cb656fd3d36a"
+      },
+      "relative_path": "02_COMPANY_POLICIES/data_classification_policy_v1.0.md"
+    },
+    {
+      "file": "hr_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit_hr_policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Corporate Policy",
+      "title": "Regodit Human Resource Policy v1.0",
+      "summary": "Governs candidate background verification via third-party providers, signed confidentiality agreements, security onboarding training, and immediate offboarding access revocation checklists.",
+      "topics_covered": [
+        "Personnel Security",
+        "Background Checks",
+        "Offboarding Checklists",
+        "Training"
+      ],
+      "key_entities": [
+        "Priyanka Choudhury (Owner)"
+      ],
+      "stats": {
+        "bytes": 16122,
+        "lines": 107,
+        "sha256": "7034d0c221938b25f42b0a3e0ce8eff100a3b3e9a72c16c9606555c7b257a59e"
+      },
+      "relative_path": "02_COMPANY_POLICIES/hr_policy_v1.0.md"
+    },
+    {
+      "file": "incident_management_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit_Incident_Management_Policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Security Policy",
+      "title": "Regodit Incident Management Policy v1.0",
+      "summary": "Defines security incident classification (Severity 1 to 4), reporting channels, containment protocols, customer notification timelines (within 72 hours), and post-mortem analysis.",
+      "topics_covered": [
+        "Incident Response",
+        "Breach Notification (72 Hours)",
+        "Severity Triage"
+      ],
+      "key_entities": [
+        "Sahil Pugalia / Founders (IR Leads)"
+      ],
+      "stats": {
+        "bytes": 7394,
+        "lines": 75,
+        "sha256": "181fce2c9e2ef5dec64791c16e50d179a423d0b908fd203eecef244668a4e7e1"
+      },
+      "relative_path": "02_COMPANY_POLICIES/incident_management_policy_v1.0.md"
+    },
+    {
+      "file": "information_security_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit_information_security_policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Umbrella Security Policy",
+      "title": "Regodit Information Security Policy v1.0",
+      "summary": "Foundational umbrella policy defining security governance, roles (CEO as acting CISO, CTO for tech/access, CBO/CPO for compliance), cloud infrastructure boundaries, remote work security, annual risk assessments, and vulnerability management.",
+      "topics_covered": [
+        "Governance",
+        "Access Control",
+        "Network Security",
+        "Logging & SIEM Status",
+        "Remote Work",
+        "SDLC"
+      ],
+      "key_entities": [
+        "Solsphere AI Inc. | Regodit",
+        "Sahil Pugalia (Owner)",
+        "Priyanka Choudhury (Approver)",
+        "Effective Date: 14 July 2026"
+      ],
+      "stats": {
+        "bytes": 10702,
+        "lines": 66,
+        "sha256": "e525ff2b69524d1f5ccf01ca6261cdb826952c0d2e33cb616ace086e1b13efb5"
+      },
+      "relative_path": "02_COMPANY_POLICIES/information_security_policy_v1.0.md"
+    },
+    {
+      "file": "password_and_secrets_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit_password_and_secrets_policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Security Policy",
+      "title": "Regodit Password and Secrets Policy v1.0",
+      "summary": "Mandates password complexity (minimum 12 characters, prioritizing passphrases over forced complexity rules), prohibiting shared accounts, password manager utilization, API key rotation, and strict prohibition of hardcoded secrets in source code.",
+      "topics_covered": [
+        "Password Standards",
+        "Secrets Management",
+        "API Credentials"
+      ],
+      "key_entities": [
+        "Sahil Pugalia (Owner)",
+        "Priyanka Choudhury (Approver)",
+        "Effective Date: 14 July 2026"
+      ],
+      "stats": {
+        "bytes": 6839,
+        "lines": 51,
+        "sha256": "fba6f0c2d6ebfa44a1fefc4c1eb3c014dcf64d19156190e8f19c99c891c19d4d"
+      },
+      "relative_path": "02_COMPANY_POLICIES/password_and_secrets_policy_v1.0.md"
+    },
+    {
+      "file": "vendor_risk_management_policy.md",
+      "source": "Hackathon/2. Company policies/Regodit_Vendor_Risk_Management_Policy.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Security Policy",
+      "title": "Regodit Vendor Risk Management Policy",
+      "summary": "Establishes vendor lifecycle management: due diligence, risk tiering (Tier 1 High to Tier 3 Low), mandatory security questionnaires, contractual flow-down of security clauses, and annual audits.",
+      "topics_covered": [
+        "Third-Party Risk Management (TPRM)",
+        "Supply Chain Security",
+        "Vendor Audits"
+      ],
+      "key_entities": [
+        "Priyanka Choudhury (Approver)"
+      ],
+      "stats": {
+        "bytes": 14238,
+        "lines": 132,
+        "sha256": "4cad40be9df3d503904548b88ae793dd09663fbe8b92962596f3781305b44066"
+      },
+      "relative_path": "02_COMPANY_POLICIES/vendor_risk_management_policy.md"
+    },
+    {
+      "file": "vulnerability_and_patch_management_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit_vulnerability_and_patch_management_policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Security Policy",
+      "title": "Regodit Vulnerability and Patch Management Policy v1.0",
+      "summary": "Defines vulnerability scanning and patching SLAs: Critical = 7 days, High = 30 days, Medium = 60 days, Low = 90 days. Mandates annual third-party penetration testing.",
+      "topics_covered": [
+        "Vulnerability Scanning",
+        "Patch Management SLAs",
+        "Penetration Testing Cadence"
+      ],
+      "key_entities": [
+        "Sahil Pugalia (Owner)",
+        "Priyanka Choudhury (Approver)",
+        "Effective Date: 14 July 2026"
+      ],
+      "stats": {
+        "bytes": 11052,
+        "lines": 68,
+        "sha256": "edbb9e377aa2365aa14b8be82b41341b2f0e3e9f52697b4c4ead4394d3ee36b2"
+      },
+      "relative_path": "02_COMPANY_POLICIES/vulnerability_and_patch_management_policy_v1.0.md"
+    },
+    {
+      "file": "risk_management_policy_v1.0.md",
+      "source": "Hackathon/2. Company policies/Regodit._risk_management_policy_v1.0.docx",
+      "category": "2. Company policies",
+      "class": "Adopted Security Policy",
+      "title": "Regodit Risk Management Policy v1.0",
+      "summary": "Governs enterprise risk assessment methodology, risk register maintenance, risk treatment options (mitigate, accept, transfer, avoid), and annual review by the CEO/acting CISO.",
+      "topics_covered": [
+        "Risk Assessment Methodology",
+        "Risk Register",
+        "Risk Treatment"
+      ],
+      "key_entities": [
+        "Priyanka Choudhury (Owner)",
+        "Sahil Pugalia"
+      ],
+      "stats": {
+        "bytes": 9525,
+        "lines": 57,
+        "sha256": "c8811b7a2ceb44c12d353aa861fa008f9aa28d5523a63a181822046408db24d1"
+      },
+      "relative_path": "02_COMPANY_POLICIES/risk_management_policy_v1.0.md"
+    },
+    {
+      "file": "soc2_type_ii_report.md",
+      "source": "Hackathon/3. Security Assessment Reports/Regodit AI_SOC2_Type_II_Report_Test.docx",
+      "category": "3. Security Assessment Reports",
+      "class": "Independent Auditor Attestation Report",
+      "title": "Regodit AI SOC 2 Type II Report (Audit Period: Apr 1, 2026 - Jun 30, 2026)",
+      "summary": "Comprehensive SOC 2 Type II audit report issued by independent CPA firm Percilchofe covering all 5 Trust Services Criteria (Security, Availability, Confidentiality, Processing Integrity, Privacy). Unqualified clean opinion.",
+      "topics_covered": [
+        "SOC 2 Type II Attestation",
+        "System Description",
+        "Control Activities",
+        "AWS CSOC"
+      ],
+      "key_entities": [
+        "Percilchofe (Auditor)",
+        "Sahil Pugalia (CEO)",
+        "Amazon Web Services (Subservice Org)"
+      ],
+      "stats": {
+        "bytes": 92916,
+        "lines": 348,
+        "sha256": "0dbd8724f1c6184b60ba94b326637708600bd7b57c54c248fbbce692cfc114b6"
+      },
+      "relative_path": "03_SECURITY_ASSESSMENT_REPORTS/soc2_type_ii_report.md"
+    },
+    {
+      "file": "soc2_auditor_attestation_and_badges.md",
+      "source": "Hackathon/3. Security Assessment Reports/Regodit AI_SOC2_Type_II_Report_Test.docx (Embedded Images)",
+      "category": "3. Security Assessment Reports",
+      "class": "Visual Attestation & Certification Artifact",
+      "title": "SOC 2 Type II Auditor Attestation & Visual Branding",
+      "summary": "Details the independent CPA firm branding (Percilchofe) from soc2_image3.png and the official AICPA SOC seal from soc2_image1.png.",
+      "topics_covered": [
+        "Auditor Identity",
+        "AICPA Certification",
+        "Attestation Scope"
+      ],
+      "key_entities": [
+        "Percilchofe",
+        "AICPA SOC"
+      ],
+      "stats": {
+        "bytes": 3117,
+        "lines": 54,
+        "sha256": "2679fbb636abf96d9d43ed74ccb192e8cc4f923df9d50cb24a4b7d1d622cc4d7"
+      },
+      "relative_path": "03_SECURITY_ASSESSMENT_REPORTS/soc2_auditor_attestation_and_badges.md"
+    },
+    {
+      "file": "vapt_penetration_test_report.md",
+      "source": "Hackathon/3. Security Assessment Reports/VAPT Report 01.docx",
+      "category": "3. Security Assessment Reports",
+      "class": "Penetration Testing Assessment",
+      "title": "Vulnerability Assessment and Penetration Testing (VAPT) Report 01",
+      "summary": "Technical penetration testing report documenting 20 vulnerabilities across web apps and AI widgets, including High CVSS 8.1 Missing Authentication and CVSS 6.5 Prompt Injection.",
+      "topics_covered": [
+        "Penetration Testing Findings",
+        "Vulnerabilities (20 count)",
+        "CVSS Scores",
+        "Remediation Guidance"
+      ],
+      "key_entities": [
+        "CREST / OWASP Top 10 Standards",
+        "Regodit Inc"
+      ],
+      "stats": {
+        "bytes": 96005,
+        "lines": 932,
+        "sha256": "cccb150a3b7af9c860622fa3d0515fae74ab0ac1e1a403a313d66cebaeed0b4f"
+      },
+      "relative_path": "03_SECURITY_ASSESSMENT_REPORTS/vapt_penetration_test_report.md"
+    },
+    {
+      "file": "employment_contract_01.md",
+      "source": "Hackathon/4. Contracts_agreements/Employment Contract 01.docx",
+      "category": "4. Contracts_agreements",
+      "class": "Legal Agreement / Service Contract",
+      "title": "Employment / Consultant Service Agreement 01",
+      "summary": "Standard consultant and employment master contract establishing corporate entity name as 'Solsphere AI Inc (dba Regodit)', IP assignment, strict confidentiality, data return upon termination, and security incident notification obligations.",
+      "topics_covered": [
+        "Corporate Legal Entity Definition",
+        "IP Assignment",
+        "Security Incident Notice",
+        "Confidentiality"
+      ],
+      "key_entities": [
+        "Solsphere AI Inc (dba Regodit)",
+        "ABC Inc. Horizons Private Limited (Bangalore)"
+      ],
+      "stats": {
+        "bytes": 54374,
+        "lines": 140,
+        "sha256": "9149de2c84aac3e4d6aa8b249ef0960cf295522e866212b985c817565b745a3c"
+      },
+      "relative_path": "04_CONTRACTS_AGREEMENTS/employment_contract_01.md"
+    },
+    {
+      "file": "master_services_agreement.md",
+      "source": "Hackathon/4. Contracts_agreements/Master Services Agreement.docx",
+      "category": "4. Contracts_agreements",
+      "class": "Customer / Commercial Agreement",
+      "title": "Master Services Agreement (MSA)",
+      "summary": "Enterprise master services agreement defining terms for SaaS licensing, data protection commitments, SLA benchmarks, limitation of liability, and audit rights.",
+      "topics_covered": [
+        "Customer Contractual Commitments",
+        "Data Protection",
+        "Audit Rights",
+        "SLA"
+      ],
+      "key_entities": [
+        "Regodit",
+        "Enterprise Customers"
+      ],
+      "stats": {
+        "bytes": 40676,
+        "lines": 81,
+        "sha256": "579f066624ea054f4fb5f0e966674f92255ba8f60263f63fec3e46f21491c93a"
+      },
+      "relative_path": "04_CONTRACTS_AGREEMENTS/master_services_agreement.md"
+    },
+    {
+      "file": "access_review_records.md",
+      "source": "Hackathon/5. Infrastructure_internal info/Access_Review_Records.xlsx",
+      "category": "5. Infrastructure_internal info",
+      "class": "Operational Security Audit Log",
+      "title": "AWS Production Console Access Review Records (09-04-2026)",
+      "summary": "Quarterly privileged access review for AWS Production Console completed by K. O'Brien (Security Lead) on 09-04-2026. Audits 7 users, identifying actions needed for S. Wong, T. Nguyen, and deprovisioning for contractor M. Delgado.",
+      "topics_covered": [
+        "Production Access List",
+        "Privilege Justification",
+        "Deprovisioning Lag (M. Delgado)"
+      ],
+      "key_entities": [
+        "K. O'Brien (Reviewer)",
+        "J. Martinez",
+        "A. Patel",
+        "S. Wong",
+        "R. Osei",
+        "T. Nguyen",
+        "M. Delgado"
+      ],
+      "stats": {
+        "bytes": 1852,
+        "lines": 28,
+        "sha256": "a142f3a0b3aeb00b816fa0ac988444841c7ed0d2614a0e0dcab4ae6d92964bd1"
+      },
+      "relative_path": "05_INFRASTRUCTURE_INTERNAL_INFO/access_review_records.md"
+    },
+    {
+      "file": "privileged_admin_access_and_logging.md",
+      "source": "Hackathon/5. Infrastructure_internal info/admin-access-logging-diagram.png",
+      "category": "5. Infrastructure_internal info",
+      "class": "Architecture Flowchart / Diagram",
+      "title": "Administrative Access and Centralized Logging Architecture Flowchart",
+      "summary": "Visual diagram detailing privileged administrative access path (Admin -> MFA -> VPN with IP allowlist -> Bastion Host with ephemeral SSH -> Production VPC) and logging path to Centralized Logging (SIEM).",
+      "topics_covered": [
+        "Privileged Access Path",
+        "Bastion Host",
+        "VPN Gateway & MFA",
+        "SIEM Discrepancy"
+      ],
+      "key_entities": [
+        "VPN Gateway",
+        "Bastion Host",
+        "Production VPC",
+        "SIEM Logging"
+      ],
+      "stats": {
+        "bytes": 5588,
+        "lines": 66,
+        "sha256": "0e329397738d46603e0798a6e21e9283a2a2c9ffd13db904d91182347c287dbb"
+      },
+      "relative_path": "05_INFRASTRUCTURE_INTERNAL_INFO/privileged_admin_access_and_logging.md"
+    },
+    {
+      "file": "asset_inventory_regodit.md",
+      "source": "Hackathon/5. Infrastructure_internal info/Asset_Inventory_Regodit.xlsx",
+      "category": "5. Infrastructure_internal info",
+      "class": "Operational Asset Registry",
+      "title": "Regodit Hardware & Infrastructure Asset Inventory (09-04-2026)",
+      "summary": "Complete hardware inventory signed by K. O'Brien listing company-issued laptops, MDM-enrolled iPhones, iPads, an on-premises Dell PowerEdge R740 server, and Cisco Meraki firewall.",
+      "topics_covered": [
+        "Asset Inventory",
+        "MDM Enrollment",
+        "Decommissioned Devices",
+        "On-Premises Server Discrepancy"
+      ],
+      "key_entities": [
+        "K. O'Brien",
+        "Dell Latitude",
+        "MacBook Pro M3",
+        "Dell PowerEdge R740",
+        "Cisco Meraki MX67"
+      ],
+      "stats": {
+        "bytes": 1857,
+        "lines": 17,
+        "sha256": "31e4e99df2e37edf304a2cee567059421b219be8e58d45617afe9bee15691194"
+      },
+      "relative_path": "05_INFRASTRUCTURE_INTERNAL_INFO/asset_inventory_regodit.md"
+    },
+    {
+      "file": "bcp_dr_plan_solsphere.md",
+      "source": "Hackathon/5. Infrastructure_internal info/BCP_DR_Plan_Solsphere.docx",
+      "category": "5. Infrastructure_internal info",
+      "class": "Operational Recovery Plan",
+      "title": "Solsphere AI Inc BCP / DR Plan (Effective: 09/04/2026)",
+      "summary": "Operational disaster recovery plan approved by S. Pugalia (CEO) defining RTO/RPO metrics (Core App RTO 2-8h, DB RTO <4h), backup mechanisms (daily automated snapshots, point-in-time recovery), and threat scenarios.",
+      "topics_covered": [
+        "BCP / DR Plan",
+        "RTO / RPO Metrics",
+        "Daily Backups",
+        "Solsphere AI Legal Entity"
+      ],
+      "key_entities": [
+        "Solsphere AI Inc",
+        "S. Pugalia (CEO)",
+        "AWS S3 / RDS"
+      ],
+      "stats": {
+        "bytes": 4345,
+        "lines": 38,
+        "sha256": "b5fffba8e90dd60ee6b6cd6f0286a99f585688f7e2c59feca356511e7c161107"
+      },
+      "relative_path": "05_INFRASTRUCTURE_INTERNAL_INFO/bcp_dr_plan_solsphere.md"
+    },
+    {
+      "file": "network_architecture_reference_diagrams.md",
+      "source": "Hackathon/5. Infrastructure_internal info/network_architecture_diagrams.pdf",
+      "category": "5. Infrastructure_internal info",
+      "class": "Architecture Specification Document",
+      "title": "B2B SaaS Network Architecture Diagrams (SOC 2 Review)",
+      "summary": "Multi-page reference document containing Figure 1 (Network Segmentation & Data Flow) and Figure 2 (Administrative Access & Logging) with official auditor disclaimer notes.",
+      "topics_covered": [
+        "Network Segmentation",
+        "Data Flow",
+        "Privileged Access",
+        "Auditor Template Disclaimer"
+      ],
+      "key_entities": [
+        "VPC",
+        "ALB",
+        "CDN/WAF",
+        "Bastion",
+        "SIEM"
+      ],
+      "stats": {
+        "bytes": 4301,
+        "lines": 60,
+        "sha256": "ae24fcd18728d247fbea3185f3740c4931a1b63d5ec810d4b5a01851ba200962"
+      },
+      "relative_path": "05_INFRASTRUCTURE_INTERNAL_INFO/network_architecture_reference_diagrams.md"
+    },
+    {
+      "file": "network_segmentation_architecture.md",
+      "source": "Hackathon/5. Infrastructure_internal info/network-segmentation-diagram.png",
+      "category": "5. Infrastructure_internal info",
+      "class": "Architecture Flowchart / Diagram",
+      "title": "Network Segmentation and Data Flow Diagram",
+      "summary": "Visual diagram detailing 3-tier VPC architecture (Public Subnet ALB -> Security Groups -> Application Tier -> Data Tier with encryption at rest) fronted by CDN+WAF.",
+      "topics_covered": [
+        "Network Segmentation",
+        "Data Flow",
+        "Encryption at Rest (Data Tier)",
+        "Security Group Boundaries"
+      ],
+      "key_entities": [
+        "CDN + WAF",
+        "Public Subnet ALB",
+        "Application Tier",
+        "Data Tier"
+      ],
+      "stats": {
+        "bytes": 4610,
+        "lines": 65,
+        "sha256": "ee14cc6e2dea4cc71e24129cd45b653e925e94c91e604c295eae87942baf231f"
+      },
+      "relative_path": "05_INFRASTRUCTURE_INTERNAL_INFO/network_segmentation_architecture.md"
+    },
+    {
+      "file": "secure_development_lifecycle_template.md",
+      "source": "Hackathon/5. Infrastructure_internal info/Secure Development Lifecycle Document 01.docx",
+      "category": "5. Infrastructure_internal info",
+      "class": "Policy Template / Draft Document",
+      "title": "Secure Development Lifecycle (SDLC) Document 01 (Template)",
+      "summary": "Pre-filled compliance template with placeholder text (<Company Name>, <Policy Owner>) outlining system change controls, version control, security testing, and release checklists.",
+      "topics_covered": [
+        "SDLC Template",
+        "Change Control",
+        "Release Checklists",
+        "Unfilled Status"
+      ],
+      "key_entities": [
+        "Regodit Template",
+        "<Company Name> Placeholders"
+      ],
+      "stats": {
+        "bytes": 6308,
+        "lines": 61,
+        "sha256": "05cc49dc219b16d8c6f9cf43e7951153d3be822c007f8e649bc70b140b986823"
+      },
+      "relative_path": "05_INFRASTRUCTURE_INTERNAL_INFO/secure_development_lifecycle_template.md"
+    },
+    {
+      "file": "solsphere_w9_tax_document.md",
+      "source": "Hackathon/5. Infrastructure_internal info/Solsphere W-9.pdf",
+      "category": "5. Infrastructure_internal info",
+      "class": "Tax & Corporate Entity Document",
+      "title": "IRS Form W-9: Solsphere AI Inc",
+      "summary": "Official Form W-9 tax document identifying company legal name as Solsphere AI Inc, Delaware C Corporation, Dover DE 19901 (unsigned draft, EIN pending).",
+      "topics_covered": [
+        "Legal Entity Verification",
+        "Delaware C-Corp",
+        "Tax Status",
+        "Questionnaire W-9 Field"
+      ],
+      "key_entities": [
+        "Solsphere AI Inc",
+        "Dover, Delaware 19901",
+        "C Corporation"
+      ],
+      "stats": {
+        "bytes": 3749,
+        "lines": 69,
+        "sha256": "43ef8e076c1f346362b36ada603e9dbb7d2050f3272690426b91de8504257fb7"
+      },
+      "relative_path": "05_INFRASTRUCTURE_INTERNAL_INFO/solsphere_w9_tax_document.md"
+    }
+  ]
+}

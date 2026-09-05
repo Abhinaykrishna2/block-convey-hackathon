@@ -1,0 +1,161 @@
+{
+  "scope": "Local supplied files at audit start; no comparison with remote Drive was performed.",
+  "sources": [
+    {
+      "path": "Hackathon/1. Sample_Vendor questionnaire/Regodit_Comprehensive_Vendor_Security_Questionnaire_Clean.xlsx",
+      "bytes": 901820,
+      "sha256": "d5b1ef11c2551001d410b6bbc4f25cb1c33dc439b30ae41e18ff7929d3be05a5",
+      "format": "xlsx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit._risk_management_policy_v1.0.docx",
+      "bytes": 146535,
+      "sha256": "2cca641503844e3644dc00115adce648eba3f8dabbe5220d35d5f1cf92f5f550",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_Incident_Management_Policy_v1.0.docx",
+      "bytes": 20734,
+      "sha256": "20f5a78ce036dd50863be628bccb8bfe51f5e19f5a1cadc98526b29e8e116035",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_Vendor_Risk_Management_Policy.docx",
+      "bytes": 40920,
+      "sha256": "beec718b144a7766ae89a4eefeeb09f7ac2bffec36242eef0418e34b08eb09d0",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_access_control_policy_v1.0.docx",
+      "bytes": 13824,
+      "sha256": "b342197182cce840117c19caa20864ccf0c865aef6eec684dbbd2d268a3bb0fe",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_asset_management_policy_v1.0.docx",
+      "bytes": 14676,
+      "sha256": "530ba1f237ec32b44732328c0d0dfe4c73559446184679f6b6d9ffb312968c18",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_business_continuity_and_disaster_recovery_policy_v1.0.docx",
+      "bytes": 16430,
+      "sha256": "ee9e365e786f94ecd616f3c97f48ffe3e8767b3f9eda91b5d6d2de90e26876ba",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_code_of_conduct_policy_v1.0.docx",
+      "bytes": 1692056,
+      "sha256": "6c0e53eb9100e79bf5e076a9990b7ab421f6708fda89d56f581b588cc712291f",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_cryptography_policy_v1.0.docx",
+      "bytes": 15181,
+      "sha256": "17fb7a83fb360c4543beb42457e036e7246e6c3fc6b1bd44a9f27a350a7180fe",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_data_classification_policy_v1.0.docx",
+      "bytes": 18008,
+      "sha256": "c21cb088b0c0e848645cd122486fd2cdf3ad0e93f2853d6b7d8a976fc635843a",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_hr_policy_v1.0.docx",
+      "bytes": 2094536,
+      "sha256": "660d5048f318cfb3773feee34581f61619e5ac0c5e1dce45a487461ff3cbc984",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_information_security_policy_v1.0.docx",
+      "bytes": 15464,
+      "sha256": "e857cb3cd14832a523939abc55036ece81866177181d1c0fc944247e1bb5da10",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_password_and_secrets_policy_v1.0.docx",
+      "bytes": 13864,
+      "sha256": "1fc6cd68d0f07d695376b87c97c995fe7f2e6a415c923ae3d476555ff7bf8a05",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/2. Company policies/Regodit_vulnerability_and_patch_management_policy_v1.0.docx",
+      "bytes": 15984,
+      "sha256": "d7b4816e4cfc803573d6a88de98c97f0913b2035e765d48f04fb01e6c5cd5ba3",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/3. Security Assessment Reports/Regodit AI_SOC2_Type_II_Report_Test.docx",
+      "bytes": 788841,
+      "sha256": "a7d5c7744e11f7ff0ddacd4f4f45e16f4e94c1233ce1dffe7c366b0ae2324b6e",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/3. Security Assessment Reports/VAPT Report 01.docx",
+      "bytes": 71269,
+      "sha256": "c20e0361efff31a025714c0ed0b992eab3e68b3774b87c2f1b76c79e9d9e746f",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/4. Contracts_agreements/Employment Contract 01.docx",
+      "bytes": 45351,
+      "sha256": "5af4004ed49f417a13e3870a8842f232c4d8261a22b934ab0fa7583f4276fb3f",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/4. Contracts_agreements/Master Services Agreement.docx",
+      "bytes": 43541,
+      "sha256": "90be1548b1dbda0d7f44559acbcdbe20153ece9e4d3b313297a627965adbe0bb",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/5. Infrastructure_internal info/Access_Review_Records.xlsx",
+      "bytes": 13387,
+      "sha256": "43521d6953a8213df11bb7f206a809399f4612c11b79f7da4cb29e6157228429",
+      "format": "xlsx"
+    },
+    {
+      "path": "Hackathon/5. Infrastructure_internal info/Asset_Inventory_Regodit.xlsx",
+      "bytes": 10802,
+      "sha256": "ab99c79c1fcee86141cce5bab669ea3c4802906a0665a6222909c7b5a6e9b5e2",
+      "format": "xlsx"
+    },
+    {
+      "path": "Hackathon/5. Infrastructure_internal info/BCP_DR_Plan_Solsphere.docx",
+      "bytes": 31750,
+      "sha256": "6c1ffa158ff553a3141d83756741c9e4166e5fe18ccfe6631c0bdccc8b59d3fb",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/5. Infrastructure_internal info/Secure Development Lifecycle Document 01.docx",
+      "bytes": 39342,
+      "sha256": "08f03cdbe3b63af609a029b3ecd10c9995e138887ebc0f72b5b3f5ec5d2ef6bf",
+      "format": "docx"
+    },
+    {
+      "path": "Hackathon/5. Infrastructure_internal info/Solsphere W-9.pdf",
+      "bytes": 1924076,
+      "sha256": "9727c793fc69440989f9dbb5560d69bcb1a16089c0a00065999f99704ff0e842",
+      "format": "pdf"
+    },
+    {
+      "path": "Hackathon/5. Infrastructure_internal info/admin-access-logging-diagram.png",
+      "bytes": 77307,
+      "sha256": "8be382d9e1aa51ff0e85d9098b4046b4995610443e3da315f8f76a6fecdecd17",
+      "format": "png"
+    },
+    {
+      "path": "Hackathon/5. Infrastructure_internal info/network-segmentation-diagram.png",
+      "bytes": 94306,
+      "sha256": "a8541b229c80c47a4430ac791a7ef2c9102910430a7c48e822ec03d57b351d44",
+      "format": "png"
+    },
+    {
+      "path": "Hackathon/5. Infrastructure_internal info/network_architecture_diagrams.pdf",
+      "bytes": 178323,
+      "sha256": "4b0410bb8a35924f86a2dd782a5e2b92cbfabf7e075e489c5b921ee840ff3d8a",
+      "format": "pdf"
+    }
+  ]
+}
